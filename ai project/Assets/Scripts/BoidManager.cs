@@ -12,6 +12,7 @@ public class BoidManager : MonoBehaviour
     private Vector3 minRange, maxRange;
 
     public List<Boid> boidInstances = new List<Boid>();
+    public List<Vector3> velocities = new List<Vector3>();
     private bool isDone;
     public Vector3 averagePosition;
 
@@ -22,22 +23,20 @@ public class BoidManager : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(Generateboids());
-    }
-
-    IEnumerator Generateboids()
-    {
         Vector3 posTotal = Vector3.zero;
         for (int i = 0; i < boidQuantity; i++)
         {
-            Vector3 startPos = new Vector3(Random.Range(minRange.x, maxRange.x), 
-                                           Random.Range(minRange.y, maxRange.y), 
+            velocities.Add(Vector3.zero);
+
+            Vector3 startPos = new Vector3(Random.Range(minRange.x, maxRange.x),
+                                           Random.Range(minRange.y, maxRange.y),
                                            Random.Range(minRange.z, maxRange.z));
             GameObject boidObj = Instantiate(boidPrefab, startPos, Quaternion.identity);
             boidObj.name = "" + i;
 
             boidInstances.Add(new Boid(i, this));
             boidInstances[i].myObject = boidObj;
+            boidInstances[i].myMat = boidObj.GetComponent<Renderer>().material;
             boidInstances[i].position = startPos;
             boidInstances[i].velocity = Vector3.zero;
             boidInstances[i].boidQuantity = boidQuantity;
@@ -46,7 +45,6 @@ public class BoidManager : MonoBehaviour
             boidInstances[i].boidSmooth = boidSmooth;
 
             posTotal += startPos;
-            yield return new WaitForEndOfFrame();
         }
 
         averagePosition = posTotal / boidQuantity;
@@ -69,6 +67,8 @@ public class BoidManager : MonoBehaviour
         {
             boidInstances[i].Update();
             posTotal += boidInstances[i].position;
+            velocities[i] = boidInstances[i].velocity;
+            // slow it down for debug purposes
             //yield return new WaitForEndOfFrame();
         }
 

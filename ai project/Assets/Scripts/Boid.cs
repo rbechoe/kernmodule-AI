@@ -3,6 +3,7 @@ using UnityEngine;
 public class Boid
 {
     public GameObject myObject;
+    public Material myMat;
     public Vector3 position;
     public Vector3 velocity;
     public int boidQuantity;
@@ -21,19 +22,18 @@ public class Boid
 
     public void Update()
     {
+        float val = Vector3.Distance(position, manager.averagePosition) / 20f;
+        myMat.color = new Color(1 - val, val, 0);
+
         Vector3 v1, v2, v3;
-
-        // update each boid
-        // move boid closer to average position
-        // base speed on how far the boid is from the average
-        // update boid color based on how far it is from the average
-
         v1 = Rule1();
         v2 = Rule2();
-        v3 = Rule3();
+        //v3 = Rule3();
+        //v2 = Vector3.zero;
+        v3 = Vector3.zero;
 
         velocity += v1 + v2 + v3;
-        velocity = Vector3.ClampMagnitude(velocity, boidSmooth);
+        velocity = velocity.normalized;
         position += velocity;
         myObject.transform.position = position;
     }
@@ -51,7 +51,7 @@ public class Boid
             }
         }
 
-        boidDirection = boidDirection * (1f / boidQuantity);
+        boidDirection = boidDirection * (1f / (boidQuantity - 1));
         boidDirection -= position;
         boidDirection = boidDirection / boidSpeed;
 
