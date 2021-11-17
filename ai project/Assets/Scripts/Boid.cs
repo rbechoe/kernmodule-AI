@@ -47,7 +47,7 @@ public class Boid
     // calculate and move boid towards centre of mass
     Vector3 Rule1()
     {
-        Vector3 boidDirection = manager.totalPos - position;
+        Vector3 boidDirection = manager.totalPosition - position;
 
         boidDirection = boidDirection * (1f / (quantity - 1));
         boidDirection -= position;
@@ -73,7 +73,7 @@ public class Boid
     // average velocity compared to other boids
     Vector3 Rule3()
     {
-        Vector3 boidVelocity = manager.totalVelo - velocity;
+        Vector3 boidVelocity = manager.totalVelocity - velocity;
 
         boidVelocity = boidVelocity / (quantity - 1);
         boidVelocity = (boidVelocity - velocity) / smooth;

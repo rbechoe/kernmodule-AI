@@ -5,6 +5,7 @@ using UnityEngine;
 public class BoidManager : MonoBehaviour
 {
     private bool isDone;
+    public float movementSpeed = 5;
 
     //---------------used for maths-----------------------------
     [HideInInspector]
@@ -12,16 +13,18 @@ public class BoidManager : MonoBehaviour
     [HideInInspector]
     public Vector3 averagePosition;
     [HideInInspector]
-    public Vector3 totalPos;
+    public Vector3 totalPosition;
     [HideInInspector]
-    public Vector3 totalVelo;
+    public Vector3 totalVelocity;
 
     //---------------things to set------------------------------
     [Header("Assign the following")]
     [SerializeField]
     private GameObject boidPrefab;
     [SerializeField]
-    private GameObject target;
+    private GameObject centerMass;
+    [SerializeField]
+    private GameObject targetObject;
 
     //---------------settings for the game designer-------------
     [Header("Adjust the following")]
@@ -64,9 +67,6 @@ public class BoidManager : MonoBehaviour
 
             posTotal += startPos;
         }
-
-        averagePosition = posTotal / boidQuantity;
-        target.transform.position = averagePosition;
         isDone = true;
     }
 
@@ -74,19 +74,24 @@ public class BoidManager : MonoBehaviour
     void Update()
     {
         if (isDone) StartCoroutine(UpdateBoids());
+
+        averagePosition = totalPosition / boidQuantity;
+        // TODO make boids follow the averagePosition in order to move as a hive
+        averagePosition += (targetObject.transform.position - averagePosition).normalized * Time.deltaTime * movementSpeed;
+        centerMass.transform.position = averagePosition;
     }
 
     IEnumerator UpdateBoids()
     {
         isDone = false;
-        totalPos = Vector3.zero;
-        totalVelo = Vector3.zero;
+        totalPosition = Vector3.zero;
+        totalVelocity = Vector3.zero;
 
         // get total values
         for (int i = 0; i < boidQuantity; i++)
         {
-            totalPos += boidInstances[i].position;
-            totalVelo += boidInstances[i].velocity;
+            totalPosition += boidInstances[i].position;
+            totalVelocity += boidInstances[i].velocity;
             boidInstances[i].UpdateSettings(boidSpeed, maxNeighbourDistance, boidSmooth, boidStep);
         }
 
@@ -96,8 +101,6 @@ public class BoidManager : MonoBehaviour
             boidInstances[i].Update();
         }
 
-        averagePosition = totalPos / boidQuantity;
-        target.transform.position = averagePosition;
         isDone = true;
         yield return new WaitForEndOfFrame();
     }
