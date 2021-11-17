@@ -7,14 +7,20 @@ public class BoidManager : MonoBehaviour
     public int boidQuantity;
 
     public GameObject boidPrefab;
+    public GameObject target;
 
     public List<GameObject> boids;
 
     public List<Vector3> boidPositions;
-    public List<Vector3> boidVelocity;
+    public List<Vector3> boidVelocities;
     public Vector3 averagePosition;
 
     public Vector3 minRange, maxRange;
+
+    private float boidSpeed = 100f; // higher = slower
+    private float maxNeighbourDistance = 1f;
+    private float boidSmooth = 8f;
+    private bool isDone;
 
     void Start()
     {
@@ -33,22 +39,28 @@ public class BoidManager : MonoBehaviour
             newboid.transform.position = startPos;
             boids.Add(newboid);
             boidPositions.Add(startPos);
-            boidVelocity.Add(Vector3.zero);
+            boidVelocities.Add(Vector3.zero);
             posTotal += startPos;
             yield return new WaitForEndOfFrame();
         }
         averagePosition = posTotal / boidQuantity;
+        target.transform.position = averagePosition;
+        isDone = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        StartCoroutine(UpdateBoids());
+        if (isDone) StartCoroutine(UpdateBoids());
     }
 
     IEnumerator UpdateBoids()
     {
-        Vector3 v1, v2, v3;
+        isDone = false;
+        Vector3 v1 = Vector3.zero;
+        Vector3 v2 = Vector3.zero;
+        Vector3 v3 = Vector3.zero;
+        Vector3 posTotal = Vector3.zero;
 
         for (int i = 0; i < boidQuantity; i++)
         {
@@ -57,29 +69,81 @@ public class BoidManager : MonoBehaviour
             // base speed on how far the boid is from the average
             // update boid color based on how far it is from the average
 
-            v1 = Rule1(boids[i]);
-            v2 = Rule2(boids[i]);
-            v3 = Rule3(boids[i]);
+            v1 = Rule1(i);
+            v2 = Rule2(i);
+            v3 = Rule3(i);
 
-            boidVelocity[i] += v1 + v2 + v3;
-            boidPositions[i] += boidVelocity[i];
+            boidVelocities[i] += v1 + v2 + v3;
+            boidVelocities[i] = Vector3.ClampMagnitude(boidVelocities[i], 8);
+            boidPositions[i] += boidVelocities[i];
 
+            boids[i].transform.position = boidPositions[i];
+            posTotal += boidPositions[i];
             yield return new WaitForEndOfFrame();
         }
+
+        averagePosition = posTotal / boidQuantity;
+        target.transform.position = averagePosition;
+        isDone = true;
     }
 
-    Vector3 Rule1(GameObject _boid)
+    // calculate and move boid towards centre of mass
+    Vector3 Rule1(int _boid)
     {
-        return _boid.transform.position;
+        Vector3 boidDirection = Vector3.zero;
+
+        for (int i = 0; i < boids.Count; i++)
+        {
+            if (_boid != i)
+            {
+                boidDirection += boidPositions[i];
+            }
+        }
+
+
+        float average = 1f / (boids.Count);
+        boidDirection = boidDirection * average;
+        boidDirection -= boidPositions[_boid];
+        boidDirection = boidDirection / boidSpeed;
+
+        return boidDirection;
     }
 
-    Vector3 Rule2(GameObject _boid)
+    // boid avoiding neighbour boid
+    Vector3 Rule2(int _boid)
     {
-        return _boid.transform.position;
+        Vector3 boidVelocity = Vector3.zero;
+
+        for (int i = 0; i < boids.Count; i++)
+        {
+            if (_boid != i)
+            {
+                if (Vector3.Distance(boidPositions[_boid], boidPositions[i]) < maxNeighbourDistance)
+                {
+                    boidVelocity = boidVelocity - (boidPositions[_boid] - boidPositions[i]);
+                }
+            }
+        }
+
+        return boidVelocity;
     }
 
-    Vector3 Rule3(GameObject _boid)
+    // average velocity compared to other boids
+    Vector3 Rule3(int _boid)
     {
-        return _boid.transform.position;
+        Vector3 boidVelocity = boidVelocities[_boid];
+
+        for (int i = 0; i < boids.Count; i++)
+        {
+            if (_boid != i)
+            {
+                boidVelocity += boidVelocities[i];
+            }
+        }
+
+        boidVelocity = boidVelocity / (boids.Count - 1);
+        boidVelocity = (boidVelocity - boidVelocities[_boid]) / boidSmooth;
+
+        return boidVelocity;
     }
 }
