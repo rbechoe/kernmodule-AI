@@ -457,15 +457,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a885d4eb02158e343bd5cf38d45639cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  boidQuantity: 5
   boidPrefab: {fileID: 3146131967427482266, guid: e21558d917aabc14e84355046a01d575, type: 3}
   target: {fileID: 2031397409}
-  boids: []
-  boidPositions: []
-  boidVelocities: []
-  averagePosition: {x: 0, y: 0, z: 0}
   minRange: {x: -10, y: -10, z: -10}
   maxRange: {x: 10, y: 10, z: 10}
+  averagePosition: {x: 0, y: 0, z: 0}
+  boidQuantity: 20
+  boidSpeed: 100
+  maxNeighbourDistance: 1
+  boidSmooth: 5
 --- !u!4 &1102455454
 Transform:
   m_ObjectHideFlags: 0
