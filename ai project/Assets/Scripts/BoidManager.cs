@@ -4,49 +4,63 @@ using UnityEngine;
 
 public class BoidManager : MonoBehaviour
 {
+    private bool isDone;
+
+    //---------------used for maths-----------------------------
+    [HideInInspector]
+    public List<Boid> boidInstances = new List<Boid>();
+    [HideInInspector]
+    public Vector3 averagePosition;
+    [HideInInspector]
+    public Vector3 totalPos;
+    [HideInInspector]
+    public Vector3 totalVelo;
+
+    //---------------things to set------------------------------
+    [Header("Assign the following")]
     [SerializeField]
     private GameObject boidPrefab;
     [SerializeField]
     private GameObject target;
-    [SerializeField]
-    private Vector3 minRange, maxRange;
 
-    public List<Boid> boidInstances = new List<Boid>();
-    public List<Vector3> velocities = new List<Vector3>();
-    private bool isDone;
-    public Vector3 averagePosition;
-
+    //---------------settings for the game designer-------------
+    [Header("Adjust the following")]
+    [Tooltip("Set the range for the spawn of the boids")]
+    public Vector3 range;
+    [Tooltip("Set amount of boids")]
+    [Range(1, 10000)]
     public int boidQuantity;
-    public float boidSpeed = 100f; // higher = slower
+    [Tooltip("Update boid seperation")] 
+    [Range(1, 10)]
     public float maxNeighbourDistance = 1f;
-    public float boidSmooth = 8f;
-
-    // used for maths
-    public Vector3 totalPos;
-    public Vector3 totalVelo;
+    [Tooltip("Update boid speed")]
+    [Range(1, 50)]
+    public float boidSpeed = 5f;
+    [Tooltip("Update boid step, used for velocity")]
+    [Range(1, 500)]
+    public float boidStep = 100f;
+    [Tooltip("Update boid smooth, used for velocity")]
+    [Range(1, 500)]
+    public float boidSmooth = 100f;
 
     void Start()
     {
         Vector3 posTotal = Vector3.zero;
         for (int i = 0; i < boidQuantity; i++)
         {
-            velocities.Add(Vector3.zero);
-
-            Vector3 startPos = new Vector3(Random.Range(minRange.x, maxRange.x),
-                                           Random.Range(minRange.y, maxRange.y),
-                                           Random.Range(minRange.z, maxRange.z));
+            Vector3 startPos = new Vector3(Random.Range(-range.x, range.x),
+                                           Random.Range(-range.y, range.y),
+                                           Random.Range(-range.z, range.z));
             GameObject boidObj = Instantiate(boidPrefab, startPos, Quaternion.identity);
             boidObj.name = "" + i;
 
-            boidInstances.Add(new Boid(i, this));
+            boidInstances.Add(new Boid(this));
             boidInstances[i].myObject = boidObj;
             boidInstances[i].myMat = boidObj.GetComponent<Renderer>().material;
             boidInstances[i].position = startPos;
             boidInstances[i].velocity = Vector3.zero;
-            boidInstances[i].boidQuantity = boidQuantity;
-            boidInstances[i].boidSpeed = boidSpeed;
-            boidInstances[i].maxNeighbourDistance = maxNeighbourDistance;
-            boidInstances[i].boidSmooth = boidSmooth;
+            boidInstances[i].quantity = boidQuantity;
+            boidInstances[i].UpdateSettings(boidSpeed, maxNeighbourDistance, boidSmooth, boidStep);
 
             posTotal += startPos;
         }
@@ -65,7 +79,6 @@ public class BoidManager : MonoBehaviour
     IEnumerator UpdateBoids()
     {
         isDone = false;
-        Vector3 posTotal = Vector3.zero;
         totalPos = Vector3.zero;
         totalVelo = Vector3.zero;
 
@@ -74,20 +87,18 @@ public class BoidManager : MonoBehaviour
         {
             totalPos += boidInstances[i].position;
             totalVelo += boidInstances[i].velocity;
+            boidInstances[i].UpdateSettings(boidSpeed, maxNeighbourDistance, boidSmooth, boidStep);
         }
 
+        // update individual boids
         for (int i = 0; i < boidQuantity; i++)
         {
             boidInstances[i].Update();
-            posTotal += boidInstances[i].position;
-            velocities[i] = boidInstances[i].velocity;
-            // slow it down for debug purposes
-            //yield return new WaitForEndOfFrame();
         }
 
-        averagePosition = posTotal / boidQuantity;
+        averagePosition = totalPos / boidQuantity;
         target.transform.position = averagePosition;
-        yield return new WaitForEndOfFrame();
         isDone = true;
+        yield return new WaitForEndOfFrame();
     }
 }

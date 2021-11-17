@@ -6,17 +6,16 @@ public class Boid
     public Material myMat;
     public Vector3 position;
     public Vector3 velocity;
-    public int boidQuantity;
-    public float boidSpeed;
+    public int quantity;
+    public float speed;
     public float maxNeighbourDistance;
-    public float boidSmooth;
+    public float smooth;
+    public float step;
 
-    private int index;
     private BoidManager manager;
 
-    public Boid(int _index, BoidManager _manager)
+    public Boid(BoidManager _manager)
     {
-        index = _index;
         manager = _manager;
     }
 
@@ -32,8 +31,17 @@ public class Boid
 
         velocity += v1 + v2 + v3;
         velocity = velocity.normalized;
-        position += velocity * Time.deltaTime;
+        position += velocity * Time.deltaTime * speed;
         myObject.transform.position = position;
+    }
+
+    // Update settings
+    public void UpdateSettings(float _speed, float _maxNeighbourDistance, float _smooth, float _step)
+    {
+        speed = _speed;
+        maxNeighbourDistance = _maxNeighbourDistance;
+        smooth = _smooth;
+        step = _step;
     }
 
     // calculate and move boid towards centre of mass
@@ -41,9 +49,9 @@ public class Boid
     {
         Vector3 boidDirection = manager.totalPos - position;
 
-        boidDirection = boidDirection * (1f / (boidQuantity - 1));
+        boidDirection = boidDirection * (1f / (quantity - 1));
         boidDirection -= position;
-        boidDirection = boidDirection / boidSpeed;
+        boidDirection = boidDirection / step; // move at a step of 1/100th
 
         return boidDirection;
     }
@@ -67,8 +75,8 @@ public class Boid
     {
         Vector3 boidVelocity = manager.totalVelo - velocity;
 
-        boidVelocity = boidVelocity / (boidQuantity - 1);
-        boidVelocity = (boidVelocity - velocity) / boidSmooth;
+        boidVelocity = boidVelocity / (quantity - 1);
+        boidVelocity = (boidVelocity - velocity) / smooth;
 
         return boidVelocity;
     }

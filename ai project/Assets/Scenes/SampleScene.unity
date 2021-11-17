@@ -327,7 +327,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!199 &941364937
 ParticleSystemRenderer:
   serializedVersion: 6
@@ -5265,14 +5265,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   boidPrefab: {fileID: 3146131967427482266, guid: e21558d917aabc14e84355046a01d575, type: 3}
   target: {fileID: 2031397409}
-  minRange: {x: -10, y: -10, z: -10}
-  maxRange: {x: 10, y: 10, z: 10}
-  velocities: []
+  range: {x: 10, y: 10, z: 10}
   averagePosition: {x: 0, y: 0, z: 0}
-  boidQuantity: 100
-  boidSpeed: 100
+  totalPos: {x: 0, y: 0, z: 0}
+  totalVelo: {x: 0, y: 0, z: 0}
+  boidQuantity: 20
   maxNeighbourDistance: 1
-  boidSmooth: 8
+  boidSpeed: 5
+  boidStep: 100
+  boidSmooth: 100
 --- !u!4 &1102455454
 Transform:
   m_ObjectHideFlags: 0
