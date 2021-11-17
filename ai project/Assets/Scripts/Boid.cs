@@ -28,28 +28,18 @@ public class Boid
         Vector3 v1, v2, v3;
         v1 = Rule1();
         v2 = Rule2();
-        //v3 = Rule3();
-        //v2 = Vector3.zero;
-        v3 = Vector3.zero;
+        v3 = Rule3();
 
         velocity += v1 + v2 + v3;
         velocity = velocity.normalized;
-        position += velocity;
+        position += velocity * Time.deltaTime;
         myObject.transform.position = position;
     }
 
     // calculate and move boid towards centre of mass
     Vector3 Rule1()
     {
-        Vector3 boidDirection = Vector3.zero;
-
-        for (int i = 0; i < boidQuantity; i++)
-        {
-            if (index != i)
-            {
-                boidDirection += manager.boidInstances[i].position;
-            }
-        }
+        Vector3 boidDirection = manager.totalPos - position;
 
         boidDirection = boidDirection * (1f / (boidQuantity - 1));
         boidDirection -= position;
@@ -66,7 +56,7 @@ public class Boid
         Collider[] neighbours = Physics.OverlapSphere(position, maxNeighbourDistance);
         foreach (Collider neighbour in neighbours)
         {
-            boidVelocity = boidVelocity - (position - manager.boidInstances[int.Parse(neighbour.name)].position);
+            boidVelocity -= (manager.boidInstances[int.Parse(neighbour.name)].position - position);
         }
 
         return boidVelocity;
@@ -75,15 +65,7 @@ public class Boid
     // average velocity compared to other boids
     Vector3 Rule3()
     {
-        Vector3 boidVelocity = velocity;
-
-        for (int i = 0; i < boidQuantity; i++)
-        {
-            if (index != i)
-            {
-                boidVelocity += manager.boidInstances[i].position;
-            }
-        }
+        Vector3 boidVelocity = manager.totalVelo - velocity;
 
         boidVelocity = boidVelocity / (boidQuantity - 1);
         boidVelocity = (boidVelocity - velocity) / boidSmooth;

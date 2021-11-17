@@ -21,6 +21,10 @@ public class BoidManager : MonoBehaviour
     public float maxNeighbourDistance = 1f;
     public float boidSmooth = 8f;
 
+    // used for maths
+    public Vector3 totalPos;
+    public Vector3 totalVelo;
+
     void Start()
     {
         Vector3 posTotal = Vector3.zero;
@@ -62,6 +66,15 @@ public class BoidManager : MonoBehaviour
     {
         isDone = false;
         Vector3 posTotal = Vector3.zero;
+        totalPos = Vector3.zero;
+        totalVelo = Vector3.zero;
+
+        // get total values
+        for (int i = 0; i < boidQuantity; i++)
+        {
+            totalPos += boidInstances[i].position;
+            totalVelo += boidInstances[i].velocity;
+        }
 
         for (int i = 0; i < boidQuantity; i++)
         {
