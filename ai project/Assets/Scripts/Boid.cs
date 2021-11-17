@@ -51,7 +51,7 @@ public class Boid
 
         boidDirection = boidDirection * (1f / (quantity - 1));
         boidDirection -= position;
-        boidDirection = boidDirection / step; // move at a step of 1/100th
+        boidDirection = boidDirection / step;
 
         return boidDirection;
     }
