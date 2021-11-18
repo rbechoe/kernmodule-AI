@@ -6,13 +6,13 @@ public class Boid
     public Material myMat;
     public Vector3 position;
     public Vector3 velocity;
-    public int quantity;
-    public float speed;
-    public float separationForce;
-    public float maxNeighbourDistance;
-    public float noise;
-    public float flock;
-    public bool followTarget;
+    public int quantity { get; set; }
+    public float speed { get; set; }
+    public float separationForce { get; set; }
+    public float maxNeighbourDistance { get; set; }
+    public float noise { get; set; }
+    public float flock { get; set; }
+    public bool followTarget { get; set; }
 
     private Vector3 currentVelocity = Vector3.zero;
 
@@ -33,17 +33,6 @@ public class Boid
         currentVelocity = Vector3.MoveTowards(currentVelocity, velocity, (separationForce * Time.deltaTime));
         position += currentVelocity * Time.deltaTime * speed;
         myObject.transform.position = position;
-    }
-
-    // Update settings
-    public void UpdateSettings(float _speed, float _maxNeighbourDistance, float _noise, float _flock, float _separationForce, bool _followTarget)
-    {
-        speed = _speed;
-        maxNeighbourDistance = _maxNeighbourDistance;
-        noise = _noise;
-        flock = _flock;
-        separationForce = _separationForce;
-        followTarget = _followTarget;
     }
 
     // calculate boid direction and force

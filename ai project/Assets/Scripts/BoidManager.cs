@@ -85,7 +85,7 @@ public class BoidManager : MonoBehaviour
             boidInstances[i].position = startPos;
             boidInstances[i].velocity = Vector3.zero;
             boidInstances[i].quantity = boidQuantity;
-            boidInstances[i].UpdateSettings(boidSpeed, maxNeighbourDistance, boidNoise, boidFlocking, boidSeparationForce, followTarget);
+            UpdateBoidSettings(boidInstances[i]);
 
             posTotal += startPos;
         }
@@ -151,7 +151,7 @@ public class BoidManager : MonoBehaviour
         {
             totalPosition += boidInstances[i].position;
             totalVelocity += boidInstances[i].velocity;
-            boidInstances[i].UpdateSettings(boidSpeed, maxNeighbourDistance, boidNoise, boidFlocking, boidSeparationForce, followTarget);
+            UpdateBoidSettings(boidInstances[i]);
         }
 
         // update individual boids
@@ -162,5 +162,15 @@ public class BoidManager : MonoBehaviour
 
         isDone = true;
         yield return new WaitForEndOfFrame();
+    }
+
+    void UpdateBoidSettings(Boid _boid)
+    {
+        _boid.speed = boidSpeed;
+        _boid.maxNeighbourDistance = maxNeighbourDistance;
+        _boid.noise = boidNoise;
+        _boid.flock = boidFlocking;
+        _boid.separationForce = boidSeparationForce;
+        _boid.followTarget = followTarget;
     }
 }

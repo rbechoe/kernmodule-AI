@@ -562,15 +562,15 @@ MonoBehaviour:
   centerMass: {fileID: 2031397409}
   targetObject: {fileID: 824548784}
   range: {x: 10, y: 10, z: 10}
-  boidQuantity: 1000
+  boidQuantity: 100
   maxNeighbourDistance: 1
   boidSpeed: 10
   boidFlocking: 100
-  boidNoise: 5
+  boidNoise: 2
   boidSeparationForce: 5
   movementSpeed: 5
   followTarget: 0
-  enableMusic: 1
+  enableMusic: 0
 --- !u!4 &1102455454
 Transform:
   m_ObjectHideFlags: 0
