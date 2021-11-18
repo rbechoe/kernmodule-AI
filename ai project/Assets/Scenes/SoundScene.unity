@@ -666,6 +666,8 @@ MonoBehaviour:
   movementSpeed: 5
   followTarget: 0
   enableMusic: 1
+  rmsValue: 0
+  rmsMultiplier: 3
 --- !u!4 &1102455454
 Transform:
   m_ObjectHideFlags: 0
@@ -687,7 +689,7 @@ AudioSource:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1102455452}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: fea62dad24bd64d488f4b1d0e2e41a54, type: 3}
@@ -783,13 +785,13 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1102455452}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 120ca4c4f9442e14db8c72acac5da136, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   CaptureType: 0
-  SpectrumSize: 128
+  SpectrumSize: 512
   ScalingStrategy: 2
   MinFrequency: 100
   MaxFrequency: 20000

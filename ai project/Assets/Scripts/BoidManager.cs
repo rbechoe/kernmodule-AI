@@ -8,9 +8,7 @@ using Assets.WasapiAudio.Scripts;
 
 public class BoidManager : AudioVisualizationEffect
 {
-    private int sampleSize = 128;
     private bool isDone;
-    private AudioSource audioSource;
 
     //---------------used for maths-----------------------------
     [HideInInspector]
@@ -66,12 +64,15 @@ public class BoidManager : AudioVisualizationEffect
     public bool enableMusic;
 
     //---------------audio related stuff-----------------------
+    [Header("Audio settings")]
+    private int sampleSize = 128;
     private float[] samples;
     private float rmsValue;
+    [Range(1,20)]
+    public float rmsMultiplier = 3f;
 
     void Start()
     {
-        audioSource = gameObject.GetComponent<AudioSource>();
         sampleSize = WasapiAudioSource.SpectrumSize;
         samples = new float[sampleSize];
 
@@ -117,17 +118,12 @@ public class BoidManager : AudioVisualizationEffect
         // update the audio based behaviour
         if (enableMusic)
         {
-            if (audioSource.volume != 1) audioSource.volume = 1;
             AnalyzeSound();
             maxNeighbourDistance = 1 + rmsValue * 10f;
             boidSpeed = 5 + rmsValue * 40f;
             boidFlocking = (rmsValue + 10) * 20f;
             boidNoise = 10 + rmsValue * 20f;
             boidSeparationForce = 5 + rmsValue * 20f;
-        }
-        else
-        {
-            if (audioSource.volume != 0) audioSource.volume = 0;
         }
         
         centerMass.transform.position = averagePosition;
@@ -136,7 +132,6 @@ public class BoidManager : AudioVisualizationEffect
     private void AnalyzeSound()
     {
         samples = GetSpectrumData();
-        //audioSource.GetOutputData(samples, 0);
 
         // Get RMS
         float sum = 0;
@@ -144,7 +139,7 @@ public class BoidManager : AudioVisualizationEffect
         {
             sum += samples[i] * samples[i];
         }
-        rmsValue = Mathf.Sqrt(sum / sampleSize);
+        rmsValue = Mathf.Sqrt(sum / sampleSize) * rmsMultiplier;
     }
 
     IEnumerator UpdateBoids()
