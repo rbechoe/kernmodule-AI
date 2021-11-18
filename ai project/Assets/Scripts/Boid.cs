@@ -28,7 +28,7 @@ public class Boid
     {
         float val = Vector3.Distance(position, manager.averagePosition) / 20f;
         myMat.color = gradient.Evaluate(val);
-        myMat.SetColor("_EmissionColor", gradient.Evaluate(val) * Mathf.Clamp(noise / 4, 0, 5));
+        myMat.SetColor("_EmissionColor", gradient.Evaluate(val) * Mathf.Clamp(noise / 20, 0, 1));
 
         velocity += Force();
         velocity = velocity.normalized;
