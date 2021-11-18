@@ -1,11 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.WasapiAudio.Scripts.Core;
+using Assets.WasapiAudio.Scripts.Wasapi;
+using Assets.WasapiAudio.Scripts.Unity;
+using Assets.WasapiAudio.Scripts;
 
-public class BoidManager : MonoBehaviour
+public class BoidManager : AudioVisualizationEffect
 {
-    const int SAMPLE_SIZE = 128;
-
+    private int sampleSize = 128;
     private bool isDone;
     private AudioSource audioSource;
 
@@ -50,6 +53,7 @@ public class BoidManager : MonoBehaviour
     [Tooltip("Update how aggressively boids avoid each other")]
     [Range(1, 100)]
     public float boidSeparationForce = 5f;
+    public Gradient boidGradient;
 
     //---------------extra settings for the game designer------
     [Header("Extra settings")]
@@ -68,7 +72,8 @@ public class BoidManager : MonoBehaviour
     void Start()
     {
         audioSource = gameObject.GetComponent<AudioSource>();
-        samples = new float[SAMPLE_SIZE];
+        sampleSize = WasapiAudioSource.SpectrumSize;
+        samples = new float[sampleSize];
 
         Vector3 posTotal = Vector3.zero;
         for (int i = 0; i < boidQuantity; i++)
@@ -82,6 +87,7 @@ public class BoidManager : MonoBehaviour
             boidInstances.Add(new Boid(this));
             boidInstances[i].myObject = boidObj;
             boidInstances[i].myMat = boidObj.GetComponent<Renderer>().material;
+            boidInstances[i].myMat.EnableKeyword("_EMISSION");
             boidInstances[i].position = startPos;
             boidInstances[i].velocity = Vector3.zero;
             boidInstances[i].quantity = boidQuantity;
@@ -129,15 +135,16 @@ public class BoidManager : MonoBehaviour
 
     private void AnalyzeSound()
     {
-        audioSource.GetOutputData(samples, 0);
+        samples = GetSpectrumData();
+        //audioSource.GetOutputData(samples, 0);
 
         // Get RMS
         float sum = 0;
-        for (int i = 0; i < SAMPLE_SIZE; i++)
+        for (int i = 0; i < sampleSize; i++)
         {
             sum += samples[i] * samples[i];
         }
-        rmsValue = Mathf.Sqrt(sum / SAMPLE_SIZE);
+        rmsValue = Mathf.Sqrt(sum / sampleSize);
     }
 
     IEnumerator UpdateBoids()
@@ -172,5 +179,6 @@ public class BoidManager : MonoBehaviour
         _boid.flock = boidFlocking;
         _boid.separationForce = boidSeparationForce;
         _boid.followTarget = followTarget;
+        _boid.gradient = boidGradient;
     }
 }

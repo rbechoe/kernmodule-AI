@@ -13,6 +13,7 @@ public class Boid
     public float noise { get; set; }
     public float flock { get; set; }
     public bool followTarget { get; set; }
+    public Gradient gradient { get; set; }
 
     private Vector3 currentVelocity = Vector3.zero;
 
@@ -26,7 +27,8 @@ public class Boid
     public void Update()
     {
         float val = Vector3.Distance(position, manager.averagePosition) / 20f;
-        myMat.color = new Color(1 - val, val, 0);
+        myMat.color = gradient.Evaluate(val);
+        myMat.SetColor("_EmissionColor", gradient.Evaluate(val) * Mathf.Clamp(noise / 4, 0, 5));
 
         velocity += Force();
         velocity = velocity.normalized;
@@ -49,7 +51,7 @@ public class Boid
         else
         {
             boidDirection = manager.totalPosition - position;
-            boidDirection = boidDirection * (1f / (quantity - 1));
+            boidDirection *= (1f / (quantity - 1));
             boidDirection -= position;
             boidDirection = boidDirection / noise;
         }
