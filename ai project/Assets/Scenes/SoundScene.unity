@@ -664,7 +664,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   movementSpeed: 5
   followTarget: 0
-  enableMusic: 1
+  enableMusic: 0
   rmsMultiplier: 3
 --- !u!4 &1102455454
 Transform:
