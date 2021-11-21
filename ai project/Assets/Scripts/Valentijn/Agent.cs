@@ -11,6 +11,7 @@ public class Agent : MonoBehaviour
     private GameObject targetVisual;
     private MazeGeneration maze;
     private LineRenderer line;
+
     private void Awake()
     {
         maze = FindObjectOfType<MazeGeneration>();

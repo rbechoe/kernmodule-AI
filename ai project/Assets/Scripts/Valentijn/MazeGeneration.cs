@@ -45,13 +45,16 @@ public class MazeGeneration : MonoBehaviour
     {
         grid = new Cell[width, height];
         grid.Initialize();
+        int count = 0;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
                 grid[x, y] = new Cell();
+                grid[x, y].index = count;
                 grid[x, y].gridPosition = new Vector2Int(x, y);
                 grid[x, y].walls = Wall.DOWN | Wall.LEFT | Wall.RIGHT | Wall.UP;
+                count++;
             }
         }
 
@@ -112,6 +115,7 @@ public class MazeGeneration : MonoBehaviour
             }
         }
     }
+
     private int GetWallCount(Cell[,] grid)
     {
         int walls = 0;
@@ -212,6 +216,7 @@ public class MazeGeneration : MonoBehaviour
 public class Cell
 {
     public Vector2Int gridPosition;
+    public int index;
     public Wall walls; //bit Encoded
     public void RemoveWall(Wall wallToRemove)
     {
