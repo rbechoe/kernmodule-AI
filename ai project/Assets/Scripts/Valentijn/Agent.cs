@@ -4,8 +4,8 @@ public class Agent : MonoBehaviour
 {
     public int moveButton = 0;
     public float moveSpeed = 3;
+    public List<Vector2Int> path = new List<Vector2Int>();
     private Astar Astar = new Astar();
-    private List<Vector2Int> path = new List<Vector2Int>();
     private Plane ground = new Plane(Vector3.up, 0f);
     private MeshRenderer renderer;
     private GameObject targetVisual;

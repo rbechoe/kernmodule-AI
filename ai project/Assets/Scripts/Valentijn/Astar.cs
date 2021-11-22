@@ -54,7 +54,7 @@ public class Astar
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            // Generate path for to follow by reversing it
+            // Generate path to follow by reversing it
             if (currentNode == endNode)
             {
                 List<Vector2Int> path = new List<Vector2Int>();
@@ -69,11 +69,16 @@ public class Astar
             // Get all neighbours of the node
             foreach (Node neighbour in GetNeighbours(currentNode, nodes))
             {
-                if (closedSet.Contains(neighbour))
+                bool wallBlock = CrossPatternWallCheck(currentNode, neighbour, grid);
+
+                // skip this iteration if node is unreachable or if we already checked it
+                if (closedSet.Contains(neighbour) || wallBlock)
                 {
                     continue;
                 }
 
+                // TODO make sure to exclude diagonal neighbours
+                // use formula to calculate negatives or positives for the difference which can not be bigger than 1
                 int costToNeighbour = currentNode.GScore + GetDistance(currentNode, neighbour);
                 if (costToNeighbour < neighbour.GScore || !openSet.Contains(neighbour))
                 {
@@ -98,6 +103,7 @@ public class Astar
     {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
+        Node prevNode = new Node(); // used for debugging purposes
 
         while (currentNode != null)
         {
@@ -108,15 +114,59 @@ public class Astar
                 {
                     break;
                 }
+                prevNode = currentNode;
                 currentNode = currentNode.parent;
             }
             else
             {
+                Debug.Log(prevNode.position + " triggered recursion with parent " + currentNode.position);
                 break;
             }
         }
         path.Reverse();
         return path;
+    }
+
+    // Check for walls in a + shape from current node
+    bool CrossPatternWallCheck(Node currentNode, Node neighbour, Cell[,] grid)
+    {
+        bool wallBlock = false;
+
+        // check if current node has wall between neighbour
+        if (currentNode.position.x < neighbour.position.x)
+        {
+            // neighbour is on the eastern side
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.RIGHT))
+            {
+                wallBlock = true;
+            }
+        }
+        if (currentNode.position.x > neighbour.position.x && !wallBlock)
+        {
+            // neighbour is on the western side
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.LEFT))
+            {
+                wallBlock = true;
+            }
+        }
+        if (currentNode.position.y < neighbour.position.y && !wallBlock)
+        {
+            // neighbour is on the northern side
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.UP))
+            {
+                wallBlock = true;
+            }
+        }
+        if (currentNode.position.y > neighbour.position.y && !wallBlock)
+        {
+            // neighbour is on the southern side
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.DOWN))
+            {
+                wallBlock = true;
+            }
+        }
+
+        return wallBlock;
     }
 
     // Calculate distance between A and B
@@ -154,9 +204,7 @@ public class Astar
 
                 if (neighbourX < width && neighbourY < height && neighbourX >= 0 && neighbourY >= 0)
                 {
-                    //Debug.Log("x: " + neighbourX + " - " + width + " y: " + neighbourY + " - " + height);
                     Node neighbour = nodes[neighbourX, neighbourY];
-                    neighbour.parent = node;
                     neighbours.Add(neighbour);
                 }
             }

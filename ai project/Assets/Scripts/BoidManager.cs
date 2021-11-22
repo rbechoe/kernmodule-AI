@@ -5,6 +5,7 @@ using Assets.WasapiAudio.Scripts.Core;
 using Assets.WasapiAudio.Scripts.Wasapi;
 using Assets.WasapiAudio.Scripts.Unity;
 using Assets.WasapiAudio.Scripts;
+using System.Threading;
 
 public class BoidManager : AudioVisualizationEffect
 {
@@ -102,6 +103,7 @@ public class BoidManager : AudioVisualizationEffect
     // Update is called once per frame
     void Update()
     {
+        // TODO insert multi threading here
         if (isDone) StartCoroutine(UpdateBoids());
 
         // go to target position or calculate center of the flock mass
