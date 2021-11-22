@@ -77,8 +77,6 @@ public class Astar
                     continue;
                 }
 
-                // TODO make sure to exclude diagonal neighbours
-                // use formula to calculate negatives or positives for the difference which can not be bigger than 1
                 int costToNeighbour = currentNode.GScore + GetDistance(currentNode, neighbour);
                 if (costToNeighbour < neighbour.GScore || !openSet.Contains(neighbour))
                 {
@@ -188,6 +186,9 @@ public class Astar
     // Get all possible neighbours of a node based on the location on the grid
     public List<Node> GetNeighbours(Node node, Node[,] nodes)
     {
+        // TODO make sure to exclude diagonal neighbours
+        // use formula to calculate negatives or positives for the difference which can not be bigger than 1
+
         List<Node> neighbours = new List<Node>();
 
         for (int x = -1; x <= 1; x++)
@@ -201,6 +202,13 @@ public class Astar
 
                 int neighbourX = node.position.x + x;
                 int neighbourY = node.position.y + y;
+
+                // exclude diagonal routes
+                // reference: https://gyazo.com/ff370190945855e0217b83ba1793c27c
+                if (x + y == -2 || x + y == 2)
+                {
+                    //continue;
+                }
 
                 if (neighbourX < width && neighbourY < height && neighbourX >= 0 && neighbourY >= 0)
                 {
