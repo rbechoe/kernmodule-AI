@@ -186,28 +186,20 @@ public class Astar
     // Get all possible neighbours of a node based on the location on the grid
     public List<Node> GetNeighbours(Node node, Node[,] nodes)
     {
-        // TODO make sure to exclude diagonal neighbours
-        // use formula to calculate negatives or positives for the difference which can not be bigger than 1
-
         List<Node> neighbours = new List<Node>();
 
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <= 1; y++)
             {
-                if (x == 0 && y == 0)
-                {
-                    continue;
-                }
-
                 int neighbourX = node.position.x + x;
                 int neighbourY = node.position.y + y;
 
-                // exclude diagonal routes
+                // exclude diagonal routes for values to be excluded
                 // reference: https://gyazo.com/ff370190945855e0217b83ba1793c27c
-                if (x + y == -2 || x + y == 2)
+                if (x + y == -2 || x + y == 2 || (x + y == 0 && x != 0) || (x == 0 && y == 0))
                 {
-                    //continue;
+                    continue;
                 }
 
                 if (neighbourX < width && neighbourY < height && neighbourX >= 0 && neighbourY >= 0)
