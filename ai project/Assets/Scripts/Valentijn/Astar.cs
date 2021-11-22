@@ -121,7 +121,7 @@ public class Astar
                 currentNode = startNode;
             }
             Debug.Log(currentNode.position);
-            path.Add(currentNode);
+            path.Add(currentNode); // TODO <-- triggers run out of memory error
             currentNode = currentNode.parent;
         }
         path.Reverse();
