@@ -8,17 +8,15 @@ public class Astar
     Node[,] nodes;
     int width, height;
 
-    /// <summary>
-    /// TODO: Implement this function so that it returns a list of Vector2Int positions which describes a path
-    /// Note that you will probably need to add some helper functions
-    /// from the startPos to the endPos
-    /// </summary>
-    /// <param name="startPos"></param>
-    /// <param name="endPos"></param>
-    /// <param name="grid"></param>
-    /// <returns></returns>
     public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid, int _width, int _height)
     {
+        // invalid end point, no need to continue
+        if (endPos.x < 0 || endPos.y < 0 || endPos.x > _width || endPos.y > _height)
+        {
+            Debug.Log("Invalid end point");
+            return null;
+        }
+
         width = _width;
         height = _height;
         nodes = new Node[width, height];

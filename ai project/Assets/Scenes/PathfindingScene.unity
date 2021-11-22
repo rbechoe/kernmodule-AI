@@ -155,6 +155,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveButton: 0
   moveSpeed: 3
+  path: []
 --- !u!4 &451908293
 Transform:
   m_ObjectHideFlags: 0
@@ -301,6 +302,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveButton: 1
   moveSpeed: 3
+  path: []
 --- !u!4 &519720385
 Transform:
   m_ObjectHideFlags: 0
@@ -604,10 +606,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ebb7f81a4386804fa86bf0b824cc1dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 1
+  moveSpeed: 10
   yPos: 15
   zoomSpeed: 2
-  lerpSpeed: 1
+  lerpSpeed: 10
 --- !u!850595691 &1082518542
 LightingSettings:
   m_ObjectHideFlags: 0

@@ -627,7 +627,7 @@ MonoBehaviour:
   centerMass: {fileID: 2031397409}
   targetObject: {fileID: 824548784}
   range: {x: 10, y: 10, z: 10}
-  boidQuantity: 10000
+  boidQuantity: 1000
   maxNeighbourDistance: 1
   boidSpeed: 10
   boidFlocking: 100

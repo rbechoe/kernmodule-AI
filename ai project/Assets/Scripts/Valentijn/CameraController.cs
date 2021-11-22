@@ -4,11 +4,12 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    public float moveSpeed = 1;
+    public float moveSpeed = 10;
     public float yPos = 15;
     public float zoomSpeed = 2;
-    public float lerpSpeed = 1;
+    public float lerpSpeed = 10;
     private Vector3 targetPos;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +24,7 @@ public class CameraController : MonoBehaviour
 
         if(vert != 0 || hor != 0)
         {
-            targetPos += (Vector3.forward * vert + hor * Vector3.right).normalized * moveSpeed;
+            targetPos += (Vector3.forward * vert + hor * Vector3.right).normalized * moveSpeed * Time.deltaTime;
         }
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");

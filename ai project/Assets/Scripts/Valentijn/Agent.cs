@@ -11,9 +11,11 @@ public class Agent : MonoBehaviour
     private GameObject targetVisual;
     private MazeGeneration maze;
     private LineRenderer line;
+    private Vector3 startPos;
 
     private void Awake()
     {
+        startPos = transform.position;
         maze = FindObjectOfType<MazeGeneration>();
         renderer = GetComponentInChildren<MeshRenderer>();
         targetVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -22,10 +24,6 @@ public class Agent : MonoBehaviour
         line = GetComponent<LineRenderer>();
         line.material.color = renderer.material.color;
         line.material.color = renderer.material.color;
-    }
-
-    private void Start()
-    {
     }
 
     public void FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid)
@@ -45,14 +43,12 @@ public class Agent : MonoBehaviour
             }
         }
     }
-
-
-    //Move to clicked position
+    
     public void Update()
     {
+        // move to clicked position
         if (Input.GetMouseButtonDown(moveButton))
         {
-            Debug.Log("Click");
             Ray r = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
 
             Vector3 mousePos = MouseToWorld();
@@ -61,6 +57,15 @@ public class Agent : MonoBehaviour
             FindPathToTarget(Vector3ToVector2Int(transform.position), targetPos, maze.grid);
         }
 
+        // make sure to remain within boundaries
+        if (transform.position.x < 0 || transform.position.x > maze.width ||
+            transform.position.y < 0 || transform.position.y > maze.height)
+        {
+            transform.position = startPos;
+            path = null;
+        }
+
+        // follow path
         if (path != null && path.Count > 0)
         {
             if (transform.position != Vector2IntToVector3(path[0]))
@@ -73,6 +78,13 @@ public class Agent : MonoBehaviour
                 path.RemoveAt(0);
                 DrawPath();
             }
+        }
+        else
+        {
+            // give target new random position
+            Vector2Int targetPos = new Vector2Int(Random.Range(0, maze.width), Random.Range(0, maze.height));
+            targetVisual.transform.position = Vector2IntToVector3(targetPos);
+            FindPathToTarget(Vector3ToVector2Int(transform.position), targetPos, maze.grid);
         }
 
     }
