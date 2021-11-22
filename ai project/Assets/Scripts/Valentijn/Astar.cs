@@ -5,6 +5,9 @@ using System.Linq;
 
 public class Astar
 {
+    Node[,] nodes;
+    int width, height;
+
     /// <summary>
     /// TODO: Implement this function so that it returns a list of Vector2Int positions which describes a path
     /// Note that you will probably need to add some helper functions
@@ -14,34 +17,39 @@ public class Astar
     /// <param name="endPos"></param>
     /// <param name="grid"></param>
     /// <returns></returns>
-    public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid)
+    public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid, int _width, int _height)
     {
+        // TODO fill up nodes somewhere where the cells are filled and assign values to them!
+        width = _width;
+        height = _height;
+        nodes = new Node[width, height];
+        nodes.Initialize();
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                nodes[x, y] = new Node(grid[x,y].gridPosition, null);
+            }
+        }
+
         Debug.Log("calculating path...");
-        Node startNode = new Node(startPos, null, grid[startPos.x, startPos.y].index);
-        Node endNode = new Node(endPos, null, grid[endPos.x, endPos.y].index);
+        Node startNode = nodes[startPos.x, startPos.y];
+        Node endNode = nodes[endPos.x, endPos.y];
 
         List<Node> openSet = new List<Node>();
         HashSet<Node> closedSet = new HashSet<Node>();
-        // TODO make dictionary that stores index as key and node as value
         openSet.Add(startNode); // starting point for the pathfinding
 
-        int count = 10;
+        int count = 900; // fail safe to break out of while loop
         while (openSet.Count > 0)
         {
             count--;
             if (count <= 0)
             {
                 Debug.Log("something went wrong...");
-                List<Vector2Int> path = new List<Vector2Int>();
-                List<Node> nodePath = RetracePath(startNode, endNode);
-                for (int i = 0; i < nodePath.Count; i++)
-                {
-                    path.Add(nodePath[i].position);
-                }
-                return path;
+                return null;
             }
-
-            //Debug.Log(openSet.Count + " - " + closedSet.Count); // <-- loops infinitely
+            
             Node currentNode = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
@@ -57,7 +65,9 @@ public class Astar
 
             if (currentNode == endNode)
             {
+                // TODO infinite recursion somehow?
                 Debug.Log("Succesfully found a path!");
+                //return null;
                 List<Vector2Int> path = new List<Vector2Int>();
                 List<Node> nodePath = RetracePath(startNode, endNode);
                 for (int i = 0; i < nodePath.Count; i++)
@@ -67,7 +77,8 @@ public class Astar
                 return path;
             }
 
-            foreach (Node neighbour in GetNeighbours(currentNode, grid))
+            //--- somewhere bugged in this foreach ---
+            foreach (Node neighbour in GetNeighbours(currentNode, nodes))
             {
                 // TODO implement wallcheck between this node and previous node
                 if (closedSet.Contains(neighbour))
@@ -84,8 +95,6 @@ public class Astar
 
                     if (!openSet.Contains(neighbour))
                     {
-                        // TODO: somehow always makes it to here past the checks
-                        // TODO: check by index if it already exists
                         //Debug.Log("added neighbour " + neighbour.position);
                         openSet.Add(neighbour);
                     }
@@ -103,8 +112,15 @@ public class Astar
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
 
+        int count = 50;
         while (currentNode != startNode)
         {
+            count--;
+            if (count < 0)
+            {
+                currentNode = startNode;
+            }
+            Debug.Log(currentNode.position);
             path.Add(currentNode);
             currentNode = currentNode.parent;
         }
@@ -130,7 +146,7 @@ public class Astar
     }
 
     // Get all possible neighbours of a node based on the location on the grid
-    public List<Node> GetNeighbours(Node node, Cell[,] grid)
+    public List<Node> GetNeighbours(Node node, Node[,] nodes)
     {
         List<Node> neighbours = new List<Node>();
 
@@ -146,9 +162,12 @@ public class Astar
                 int neighbourX = node.position.x + x;
                 int neighbourY = node.position.y + y;
 
-                if (neighbourX < grid.GetLength(0) && neighbourY < grid.GetLength(1))
+                if (neighbourX < width && neighbourY < height && neighbourX >= 0 && neighbourY >= 0)
                 {
-                    neighbours.Add(new Node(new Vector2Int(neighbourX, neighbourY), null, grid[neighbourX, neighbourY].index));
+                    //Debug.Log("x: " + neighbourX + " - " + width + " y: " + neighbourY + " - " + height);
+                    Node neighbour = nodes[neighbourX, neighbourY];
+                    neighbour.parent = node;
+                    neighbours.Add(neighbour);
                 }
             }
         }
@@ -163,7 +182,6 @@ public class Astar
     {
         public Vector2Int position; //Position on the grid
         public Node parent; //Parent Node of this node
-        public int index;
 
         public float FScore { //GScore + HScore
             get { return GScore + HScore; }
@@ -172,11 +190,10 @@ public class Astar
         public int HScore; //Distance estimated based on Heuristic
 
         public Node() { }
-        public Node(Vector2Int position, Node parent, int index)
+        public Node(Vector2Int position, Node parent)
         {
             this.position = position;
             this.parent = parent;
-            this.index = index;
         }
     }
 }
