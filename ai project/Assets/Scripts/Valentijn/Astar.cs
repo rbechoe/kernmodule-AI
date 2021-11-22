@@ -19,11 +19,11 @@ public class Astar
     /// <returns></returns>
     public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid, int _width, int _height)
     {
-        // TODO fill up nodes somewhere where the cells are filled and assign values to them!
         width = _width;
         height = _height;
         nodes = new Node[width, height];
         nodes.Initialize();
+
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -32,7 +32,6 @@ public class Astar
             }
         }
 
-        Debug.Log("calculating path...");
         Node startNode = nodes[startPos.x, startPos.y];
         Node endNode = nodes[endPos.x, endPos.y];
 
@@ -40,16 +39,8 @@ public class Astar
         HashSet<Node> closedSet = new HashSet<Node>();
         openSet.Add(startNode); // starting point for the pathfinding
 
-        int count = 900; // fail safe to break out of while loop
         while (openSet.Count > 0)
         {
-            count--;
-            if (count <= 0)
-            {
-                Debug.Log("something went wrong...");
-                return null;
-            }
-            
             Node currentNode = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
@@ -63,11 +54,9 @@ public class Astar
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
+            // Generate path for to follow by reversing it
             if (currentNode == endNode)
             {
-                // TODO infinite recursion somehow?
-                Debug.Log("Succesfully found a path!");
-                //return null;
                 List<Vector2Int> path = new List<Vector2Int>();
                 List<Node> nodePath = RetracePath(startNode, endNode);
                 for (int i = 0; i < nodePath.Count; i++)
@@ -77,10 +66,9 @@ public class Astar
                 return path;
             }
 
-            //--- somewhere bugged in this foreach ---
+            // Get all neighbours of the node
             foreach (Node neighbour in GetNeighbours(currentNode, nodes))
             {
-                // TODO implement wallcheck between this node and previous node
                 if (closedSet.Contains(neighbour))
                 {
                     continue;
@@ -95,7 +83,6 @@ public class Astar
 
                     if (!openSet.Contains(neighbour))
                     {
-                        //Debug.Log("added neighbour " + neighbour.position);
                         openSet.Add(neighbour);
                     }
                 }
@@ -112,20 +99,23 @@ public class Astar
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
 
-        int count = 50;
-        while (currentNode != startNode)
+        while (currentNode != null)
         {
-            count--;
-            if (count < 0)
+            if (!path.Contains(currentNode))
             {
-                currentNode = startNode;
+                path.Add(currentNode);
+                if (currentNode == startNode)
+                {
+                    break;
+                }
+                currentNode = currentNode.parent;
             }
-            Debug.Log(currentNode.position);
-            path.Add(currentNode); // TODO <-- triggers run out of memory error
-            currentNode = currentNode.parent;
+            else
+            {
+                break;
+            }
         }
         path.Reverse();
-
         return path;
     }
 
