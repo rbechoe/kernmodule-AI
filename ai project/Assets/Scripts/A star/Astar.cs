@@ -141,6 +141,8 @@ public class Astar
         Debug.Log("the x wall is " + xVal + " : " + hasWallX);
         bool hasWallY = cell.HasWall((Wall) yVal); // only when y not 0
 
+        // getwalls en haswalls
+
         return ((hasWallX && xVal != 0) || (hasWallY && yVal != 0)) ? true : false;*/
 
         
