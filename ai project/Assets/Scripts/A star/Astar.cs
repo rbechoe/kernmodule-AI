@@ -70,7 +70,7 @@ public class Astar
             }
 
             // Get all neighbours of the node
-            foreach (Node neighbour in GetNeighbours(currentNode, nodes))
+            foreach (Node neighbour in GetNeighbours(currentNode))
             {
                 bool wallBlock = CrossPatternWallCheck(currentNode, neighbour, grid);
 
@@ -191,7 +191,7 @@ public class Astar
     }
 
     // Get all possible neighbours of a node based on the location on the grid
-    public List<Node> GetNeighbours(Node node, Node[,] nodes)
+    public List<Node> GetNeighbours(Node node)
     {
         List<Node> neighbours = new List<Node>();
 

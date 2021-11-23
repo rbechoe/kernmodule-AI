@@ -1106,4 +1106,7 @@ MonoBehaviour:
   flockMult: 5
   noiseMult: 20
   sepaMult: 5
+  applyProfile1: 0
+  applyProfile2: 0
+  applyProfile3: 0
   rmsMultiplier: 5
