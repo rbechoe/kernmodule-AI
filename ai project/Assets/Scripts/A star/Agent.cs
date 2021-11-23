@@ -12,11 +12,11 @@ public class Agent : MonoBehaviour
     private GameObject targetVisual;
     private MazeGeneration maze;
     private LineRenderer line;
-    private Vector3 startPos;
+    private Vector3 spawnPos;
 
     private void Awake()
     {
-        startPos = transform.position;
+        spawnPos = transform.position;
         maze = FindObjectOfType<MazeGeneration>();
         renderer = GetComponentInChildren<MeshRenderer>();
         targetVisual = GameObject.CreatePrimitive(PrimitiveType.Cube);
@@ -26,9 +26,15 @@ public class Agent : MonoBehaviour
         line.material.color = renderer.material.color;
     }
 
-    public void FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid)
+    public void FindPathToTarget(Vector2Int _startPos, Vector2Int _endPos, Cell[,] _grid)
     {
-        path = Astar.FindPathToTarget(startPos, endPos, grid, maze.width, maze.height, maze.scaleFactor);
+        path = null;
+        path = Astar.FindPathToTarget(_startPos, _endPos, _grid, maze.width, maze.height, maze.scaleFactor);
+        if (path == null)
+        {
+            // received invalid path so reset position
+            transform.position = spawnPos;
+        }
         DrawPath();
     }
 
@@ -58,14 +64,6 @@ public class Agent : MonoBehaviour
             FindPathToTarget(Vector3ToVector2Int(transform.position), targetPos, maze.grid);
         }
 
-        // make sure to remain within boundaries
-        if (transform.position.x < 0 || transform.position.x > maze.width * maze.scaleFactor ||
-            transform.position.y < 0 || transform.position.y > maze.height * maze.scaleFactor)
-        {
-            transform.position = startPos;
-            path = null;
-        }
-
         // follow path
         if (path != null && path.Count > 0)
         {
@@ -89,6 +87,7 @@ public class Agent : MonoBehaviour
         }
 
     }
+
     public Vector3 MouseToWorld()
     {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -104,10 +103,12 @@ public class Agent : MonoBehaviour
     {
         return new Vector2Int(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.z));
     }
+
     private Vector3 Vector2IntToVector3(Vector2Int pos, float YPos = 0)
     {
         return new Vector3(Mathf.RoundToInt(pos.x), YPos, Mathf.RoundToInt(pos.y));
     }
+
     private void OnDrawGizmos()
     {
         if (path != null && path.Count > 0)
@@ -117,7 +118,6 @@ public class Agent : MonoBehaviour
                 Gizmos.color = renderer.material.color;
                 Gizmos.DrawLine(Vector2IntToVector3(path[i], 0.5f), Vector2IntToVector3(path[i + 1], 0.5f));
             }
-
         }
     }
 }

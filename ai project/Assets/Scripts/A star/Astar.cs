@@ -16,17 +16,16 @@ public class Astar
         { -1, Wall.RIGHT },
         { 2, Wall.DOWN }
     };
-    // -1 is right, 1 is left
-    // -2 is top, 2 is bottom
 
     public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid, int _width, int _height, int scaleFactor)
     {
-        // calculate scale factor
+        // calculate grid position
         startPos = new Vector2Int((int)Math.Round(startPos.x * 1f / scaleFactor), (int)Math.Round(startPos.y * 1f / scaleFactor));
         endPos = new Vector2Int((int)Math.Round(endPos.x * 1f / scaleFactor), (int)Math.Round(endPos.y * 1f / scaleFactor));
 
-        // invalid end point, no need to continue
-        if (endPos.x < 0 || endPos.y < 0 || endPos.x > _width || endPos.y > _height)
+        // invalid point, no need to continue
+        if ((endPos.x < 0 || endPos.y < 0 || endPos.x > _width || endPos.y > _height) ||
+            (startPos.x < 0 || startPos.y < 0 || startPos.x > _width || startPos.y > _height))
         {
             Debug.Log("Invalid end point");
             return null;
@@ -114,7 +113,6 @@ public class Astar
     {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
-        Node prevNode = new Node(); // used for debugging purposes
 
         while (currentNode != null)
         {
@@ -125,12 +123,11 @@ public class Astar
                 {
                     break;
                 }
-                prevNode = currentNode;
                 currentNode = currentNode.parent;
             }
             else
             {
-                Debug.Log(prevNode.position + " triggered recursion with parent " + currentNode.position);
+                Debug.Log("Failed to calculate whole path, triggered infinite loop");
                 break;
             }
         }

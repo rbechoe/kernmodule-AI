@@ -9,12 +9,10 @@ public class MazeGeneration : MonoBehaviour
     public CellPrefab cellPrefab;
     public float desiredWallpercentage = 0.4f;
     private List<GameObject> allCellObjects = new List<GameObject>();
-    public int seed = 1234;
 
     // Start is called before the first frame update
     private void Awake()
     {
-        Random.InitState(seed);
         GenerateMaze();
     }
 
@@ -30,8 +28,6 @@ public class MazeGeneration : MonoBehaviour
 
     private void GenerateMazeSettings()
     {
-        seed = Random.Range(0, int.MaxValue);
-        Random.InitState(seed);
         width = Random.Range(10, 100);
         height = Random.Range(10, 100);
         desiredWallpercentage = Random.Range(0.2f, 1.0f);
@@ -86,7 +82,6 @@ public class MazeGeneration : MonoBehaviour
         int totalWallsInMaze = GetWallCount(grid);
         int totalPossibleWallsInmaze = 4 * width * height;
         float wallPercentage = totalWallsInMaze / (float)totalPossibleWallsInmaze;
-        Debug.Log("Wall Percentage: " + wallPercentage);
         while (wallPercentage > desiredWallpercentage)
         {
             int randomX = Random.Range(0, width);
@@ -244,8 +239,8 @@ public class Cell
 [System.Flags]
 public enum Wall
 {
-    LEFT = 0x1, // raw val X 1
-    UP = 0x2, // raw val Y -1
-    RIGHT = 0x4, // raw val X -1
-    DOWN = 0x8 // raw val Y 1
+    LEFT = 0x1,
+    UP = 0x2,
+    RIGHT = 0x4,
+    DOWN = 0x8
 }
