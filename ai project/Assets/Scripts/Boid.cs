@@ -64,7 +64,14 @@ public class Boid
         Collider[] neighbours = Physics.OverlapSphere(position, maxNeighbourDistance);
         foreach (Collider neighbour in neighbours)
         {
-            boidForce -= (manager.boidInstances[int.Parse(neighbour.name)].position - position);
+            if (neighbour.CompareTag("boid"))
+            {
+                boidForce -= (manager.boidInstances[int.Parse(neighbour.name)].position - position);
+            }
+            else
+            {
+                boidForce -= neighbour.transform.position - position;
+            }
         }
 
         return boidDirection + boidVelocity + boidForce;

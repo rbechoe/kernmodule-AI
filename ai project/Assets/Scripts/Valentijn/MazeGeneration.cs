@@ -5,7 +5,7 @@ public class MazeGeneration : MonoBehaviour
 {
     public int width = 10, height = 10;
     public Cell[,] grid;
-    public float scaleFactor = 1;
+    public int scaleFactor = 1;
     public CellPrefab cellPrefab;
     public float desiredWallpercentage = 0.4f;
     private List<GameObject> allCellObjects = new List<GameObject>();

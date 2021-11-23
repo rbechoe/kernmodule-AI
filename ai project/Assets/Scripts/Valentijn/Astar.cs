@@ -2,14 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using System;
 
 public class Astar
 {
     Node[,] nodes;
     int width, height;
 
-    public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid, int _width, int _height)
+    public List<Vector2Int> FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid, int _width, int _height, int scaleFactor)
     {
+        // calculate scale factor
+        startPos = new Vector2Int((int)Math.Round(startPos.x * 1f / scaleFactor), (int)Math.Round(startPos.y * 1f / scaleFactor));
+        endPos = new Vector2Int((int)Math.Round(endPos.x * 1f / scaleFactor), (int)Math.Round(endPos.y * 1f / scaleFactor));
+
         // invalid end point, no need to continue
         if (endPos.x < 0 || endPos.y < 0 || endPos.x > _width || endPos.y > _height)
         {
@@ -59,7 +64,7 @@ public class Astar
                 List<Node> nodePath = RetracePath(startNode, endNode);
                 for (int i = 0; i < nodePath.Count; i++)
                 {
-                    path.Add(nodePath[i].position);
+                    path.Add(nodePath[i].position * scaleFactor);
                 }
                 return path;
             }
@@ -132,7 +137,8 @@ public class Astar
         if (currentNode.position.x < neighbour.position.x)
         {
             // neighbour is on the eastern side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.RIGHT))
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.RIGHT) ||
+                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.LEFT))
             {
                 wallBlock = true;
             }
@@ -140,7 +146,8 @@ public class Astar
         if (currentNode.position.x > neighbour.position.x && !wallBlock)
         {
             // neighbour is on the western side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.LEFT))
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.LEFT) ||
+                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.RIGHT))
             {
                 wallBlock = true;
             }
@@ -148,7 +155,8 @@ public class Astar
         if (currentNode.position.y < neighbour.position.y && !wallBlock)
         {
             // neighbour is on the northern side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.UP))
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.UP) ||
+                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.DOWN))
             {
                 wallBlock = true;
             }
@@ -156,7 +164,8 @@ public class Astar
         if (currentNode.position.y > neighbour.position.y && !wallBlock)
         {
             // neighbour is on the southern side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.DOWN))
+            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.DOWN) ||
+                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.UP))
             {
                 wallBlock = true;
             }

@@ -60,6 +60,33 @@ public class BoidManager : AudioVisualizationEffect
     [Tooltip("Yup!")]
     public bool enableMusic;
 
+    //---------------audio related multipliers-----------------
+    [Header("Audio related multipliers")]
+    [Tooltip("Neighbour distance multiplier")]
+    [Range(1, 100)]
+    public float NeighbourDistMult = 10f;
+    [Tooltip("Speed multiplier")]
+    [Range(1, 100)]
+    public float speedMult = 40f;
+    [Tooltip("Flocking multiplier")]
+    [Range(1, 100)]
+    public float flockMult = 20f;
+    [Tooltip("Noise multiplier")]
+    [Range(1, 100)]
+    public float noiseMult = 20f;
+    [Tooltip("Separation force multiplier")]
+    [Range(1, 100)]
+    public float sepaMult = 20f;
+
+    //---------------profile presets---------------------------
+    [Header("Audio related multipliers")]
+    [Tooltip("Apply first profile to the multipliers")]
+    public bool applyProfile1;
+    [Tooltip("Apply second profile to the multipliers")]
+    public bool applyProfile2;
+    [Tooltip("Apply third profile to the multipliers")]
+    public bool applyProfile3;
+
     //---------------audio related stuff-----------------------
     [Header("Audio settings")]
     private int sampleSize = 128;
@@ -81,6 +108,7 @@ public class BoidManager : AudioVisualizationEffect
                                            Random.Range(-range.z, range.z));
             GameObject boidObj = Instantiate(boidPrefab, startPos, Quaternion.identity);
             boidObj.name = "" + i;
+            boidObj.tag = "boid";
 
             boidInstances.Add(new Boid(this));
             boidInstances[i].myObject = boidObj;
@@ -99,6 +127,7 @@ public class BoidManager : AudioVisualizationEffect
     void Update()
     {
         if (isDone) StartCoroutine(UpdateBoids());
+        if (applyProfile1 || applyProfile2 || applyProfile3) SetProfile();
 
         // go to target position or calculate center of the flock mass
         if (followTarget)
@@ -115,14 +144,50 @@ public class BoidManager : AudioVisualizationEffect
         if (enableMusic)
         {
             AnalyzeSound();
-            maxNeighbourDistance = 1 + rmsValue * 10f;
-            boidSpeed = 5 + rmsValue * 40f;
-            boidFlocking = (rmsValue + 10) * 20f;
-            boidNoise = 10 + rmsValue * 20f;
-            boidSeparationForce = 5 + rmsValue * 20f;
+            maxNeighbourDistance = 1 + rmsValue * NeighbourDistMult;
+            boidSpeed = 5 + rmsValue * speedMult;
+            boidFlocking = (rmsValue + 10) * flockMult;
+            boidNoise = 10 + rmsValue * noiseMult;
+            boidSeparationForce = 5 + rmsValue * sepaMult;
         }
         
         centerMass.transform.position = averagePosition;
+    }
+
+    private void SetProfile()
+    {
+        if (applyProfile1)
+        {
+            NeighbourDistMult = 1;
+            speedMult = 25;
+            flockMult = 5;
+            noiseMult = 20;
+            sepaMult = 7;
+            rmsMultiplier = 6.9f;
+            applyProfile1 = false;
+        }
+
+        if (applyProfile2)
+        {
+            NeighbourDistMult = 1;
+            speedMult = 30;
+            flockMult = 5;
+            noiseMult = 20;
+            sepaMult = 5;
+            rmsMultiplier = 5;
+            applyProfile2 = false;
+        }
+
+        if (applyProfile3)
+        {
+            NeighbourDistMult = 1;
+            speedMult = 10;
+            flockMult = 1;
+            noiseMult = 25;
+            sepaMult = 1;
+            rmsMultiplier = 10;
+            applyProfile3 = false;
+        }
     }
 
     private void AnalyzeSound()

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 public class Agent : MonoBehaviour
 {
@@ -23,12 +24,11 @@ public class Agent : MonoBehaviour
         targetVisual.GetComponent<MeshRenderer>().material.color = renderer.material.color;
         line = GetComponent<LineRenderer>();
         line.material.color = renderer.material.color;
-        line.material.color = renderer.material.color;
     }
 
     public void FindPathToTarget(Vector2Int startPos, Vector2Int endPos, Cell[,] grid)
     {
-        path = Astar.FindPathToTarget(startPos, endPos, grid, maze.width, maze.height);
+        path = Astar.FindPathToTarget(startPos, endPos, grid, maze.width, maze.height, maze.scaleFactor);
         DrawPath();
     }
 
@@ -36,10 +36,11 @@ public class Agent : MonoBehaviour
     {
         if (path != null && path.Count > 0)
         {
-            line.positionCount = path.Count;
+            line.positionCount = path.Count + 1;
+            line.SetPosition(0, transform.position);
             for (int i = 0; i < path.Count; i++)
             {
-                line.SetPosition(i, Vector2IntToVector3(path[i], 0.1f));
+                line.SetPosition(i + 1, Vector2IntToVector3(path[i], 0.1f));
             }
         }
     }
@@ -49,17 +50,17 @@ public class Agent : MonoBehaviour
         // move to clicked position
         if (Input.GetMouseButtonDown(moveButton))
         {
-            Ray r = Camera.main.ScreenPointToRay(new Vector3(Input.mousePosition.x, Input.mousePosition.y, -10));
-
             Vector3 mousePos = MouseToWorld();
             Vector2Int targetPos = Vector3ToVector2Int(mousePos);
+            targetPos = new Vector2Int((int)Math.Round(targetPos.x * 1f / maze.scaleFactor), (int)Math.Round(targetPos.y * 1f / maze.scaleFactor));
+            targetPos = targetPos * maze.scaleFactor;
             targetVisual.transform.position = Vector2IntToVector3(targetPos);
             FindPathToTarget(Vector3ToVector2Int(transform.position), targetPos, maze.grid);
         }
 
         // make sure to remain within boundaries
-        if (transform.position.x < 0 || transform.position.x > maze.width ||
-            transform.position.y < 0 || transform.position.y > maze.height)
+        if (transform.position.x < 0 || transform.position.x > maze.width * maze.scaleFactor ||
+            transform.position.y < 0 || transform.position.y > maze.height * maze.scaleFactor)
         {
             transform.position = startPos;
             path = null;
@@ -82,7 +83,7 @@ public class Agent : MonoBehaviour
         else
         {
             // give target new random position
-            Vector2Int targetPos = new Vector2Int(Random.Range(0, maze.width), Random.Range(0, maze.height));
+            Vector2Int targetPos = new Vector2Int(UnityEngine.Random.Range(0, maze.width), UnityEngine.Random.Range(0, maze.height)) * maze.scaleFactor;
             targetVisual.transform.position = Vector2IntToVector3(targetPos);
             FindPathToTarget(Vector3ToVector2Int(transform.position), targetPos, maze.grid);
         }
