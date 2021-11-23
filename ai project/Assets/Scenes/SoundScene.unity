@@ -627,7 +627,7 @@ MonoBehaviour:
   centerMass: {fileID: 2031397409}
   targetObject: {fileID: 824548784}
   range: {x: 10, y: 10, z: 10}
-  boidQuantity: 100
+  boidQuantity: 1000
   maxNeighbourDistance: 1
   boidSpeed: 10
   boidFlocking: 100
@@ -664,7 +664,15 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   movementSpeed: 5
   followTarget: 0
-  enableMusic: 0
+  enableMusic: 1
+  NeighbourDistMult: 10
+  speedMult: 40
+  flockMult: 20
+  noiseMult: 20
+  sepaMult: 20
+  applyProfile1: 0
+  applyProfile2: 0
+  applyProfile3: 0
   rmsMultiplier: 3
 --- !u!4 &1102455454
 Transform:
