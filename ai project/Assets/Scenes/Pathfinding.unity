@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveButton: 0
-  moveSpeed: 3
+  moveSpeed: 1
   path: []
 --- !u!4 &451908293
 Transform:
@@ -704,8 +704,8 @@ MonoBehaviour:
   height: 10
   scaleFactor: 1
   cellPrefab: {fileID: 8932503495734551348, guid: bdc781e527c3bf24d8a4ee16355d0cf5, type: 3}
-  desiredWallpercentage: 0.55
-  seed: 1234
+  desiredWallpercentage: 0.5
+  seed: 1310610931
 --- !u!4 &1444179295
 Transform:
   m_ObjectHideFlags: 0

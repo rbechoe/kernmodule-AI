@@ -131,41 +131,49 @@ public class Astar
     // Check for walls in a + shape from current node
     bool CrossPatternWallCheck(Node currentNode, Node neighbour, Cell[,] grid)
     {
-        bool wallBlock = false;
+        /*Cell cell = grid[currentNode.position.x, currentNode.position.y];
 
         // check if current node has wall between neighbour
+        int xVal = currentNode.position.x - neighbour.position.x; // -1 is right, 1 is left
+        int yVal = currentNode.position.y - neighbour.position.y; // -1 is top, 1 is bottom
+        bool hasWallX = cell.HasWall((Wall) xVal); // only when x not 0
+        Debug.Log(cell.walls);
+        Debug.Log("the x wall is " + xVal + " : " + hasWallX);
+        bool hasWallY = cell.HasWall((Wall) yVal); // only when y not 0
+
+        return ((hasWallX && xVal != 0) || (hasWallY && yVal != 0)) ? true : false;*/
+
+        
+        bool wallBlock = false;
+        Cell cell = grid[currentNode.position.x, currentNode.position.y];
         if (currentNode.position.x < neighbour.position.x)
         {
             // neighbour is on the eastern side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.RIGHT) ||
-                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.LEFT))
+            if (cell.HasWall(Wall.RIGHT))
             {
                 wallBlock = true;
             }
         }
-        if (currentNode.position.x > neighbour.position.x && !wallBlock)
+        if (currentNode.position.x > neighbour.position.x)
         {
             // neighbour is on the western side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.LEFT) ||
-                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.RIGHT))
+            if (cell.HasWall(Wall.LEFT))
             {
                 wallBlock = true;
             }
         }
-        if (currentNode.position.y < neighbour.position.y && !wallBlock)
+        if (currentNode.position.y < neighbour.position.y)
         {
             // neighbour is on the northern side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.UP) ||
-                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.DOWN))
+            if (cell.HasWall(Wall.UP))
             {
                 wallBlock = true;
             }
         }
-        if (currentNode.position.y > neighbour.position.y && !wallBlock)
+        if (currentNode.position.y > neighbour.position.y)
         {
             // neighbour is on the southern side
-            if (grid[currentNode.position.x, currentNode.position.y].HasWall(Wall.DOWN) ||
-                grid[neighbour.position.x, neighbour.position.y].HasWall(Wall.UP))
+            if (cell.HasWall(Wall.DOWN))
             {
                 wallBlock = true;
             }
@@ -204,7 +212,7 @@ public class Astar
 
                 // exclude diagonal routes for values to be excluded
                 // reference: https://gyazo.com/ff370190945855e0217b83ba1793c27c
-                if (x + y == -2 || x + y == 2 || (x + y == 0 && x != 0) || (x == 0 && y == 0))
+                if (!Convert.ToBoolean(Mathf.Pow(x + y, 2) % 2))
                 {
                     continue;
                 }
