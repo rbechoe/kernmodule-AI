@@ -154,7 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveButton: 0
-  moveSpeed: 1
+  moveSpeed: 10
   path: []
 --- !u!4 &451908293
 Transform:

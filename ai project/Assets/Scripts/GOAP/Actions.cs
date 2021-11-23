@@ -30,6 +30,7 @@ public class ChopTree : Action
     {
         if (!hasRequirement) Debug.Log("Agent performed: " + name);
     }
+
     public override void PerformAction(List<int> inventory)
     {
         if (hasRequirement && inventory.Contains(requiredItem)) Debug.Log("Agent performed: " + name);
@@ -49,6 +50,7 @@ public class CollectAxe : Action
     {
         if (!hasRequirement) Debug.Log("Agent performed: " + name);
     }
+
     public override void PerformAction(List<int> inventory)
     {
         if (hasRequirement && inventory.Contains(requiredItem)) Debug.Log("Agent performed: " + name);
