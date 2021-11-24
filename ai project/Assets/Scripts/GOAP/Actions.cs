@@ -43,6 +43,7 @@ public class CollectAxe : Action
     CollectAxe()
     {
         name = "Collect Axe";
+        itemId = ItemList.ITEM_AXE;
         hasRequirement = false;
     }
 
@@ -53,7 +54,7 @@ public class CollectAxe : Action
 
     public override void PerformAction(List<int> inventory)
     {
-        if (hasRequirement && inventory.Contains(requiredItem)) Debug.Log("Agent performed: " + name);
-        else Debug.Log("Agent does not have item");
+        // TODO give item to inventory
+        Debug.Log("Agent performed: " + name);
     }
 }
