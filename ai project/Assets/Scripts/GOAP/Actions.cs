@@ -4,16 +4,45 @@ using UnityEngine;
 
 public class Actions : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    public List<Action> availableActions = new List<Action>();
+}
+
+public class BurnHouse : Action
+{
+    public override void PerformAction()
     {
-        
+
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void PerformAction(List<int> inventory)
     {
-        
+
+    }
+}
+
+public class CollectBranch : Action
+{
+    public override void PerformAction()
+    {
+
+    }
+
+    public override void PerformAction(List<int> inventory)
+    {
+
+    }
+}
+
+public class StartFire : Action
+{
+    public override void PerformAction()
+    {
+
+    }
+
+    public override void PerformAction(List<int> inventory)
+    {
+
     }
 }
 
