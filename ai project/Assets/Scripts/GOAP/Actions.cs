@@ -19,6 +19,8 @@ public class Actions : MonoBehaviour
 
     public List<Vector3> pathToActions = new List<Vector3>();
 
+    public List<int> inventory = new List<int>();
+
     private void Start()
     {
         availableActions = FindObjectsOfType<Action>();
@@ -28,7 +30,10 @@ public class Actions : MonoBehaviour
 
     private void Update()
     {
-        //SelectNewGoal();
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            SelectNewGoal();
+        }
     }
 
     void SelectNewGoal()
@@ -50,7 +55,7 @@ public class Actions : MonoBehaviour
     public List<Vector3> FindPathToTarget(Vector3 startPosition, Action goal, Action[] actions)
     {
         List<Action> openSet = new List<Action>();
-        List<int> tempInventory = new List<int>();
+        List<int> tempInventory = inventory;
         HashSet<Action> closedSet = new HashSet<Action>();
         openSet.Add(goal);
         // Logic: start at the goal and check for requirements to find eventually the most optimal path
@@ -60,8 +65,7 @@ public class Actions : MonoBehaviour
             Action currentAction = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
-                // if other node(s) have better scores start looking from their point
-                if (!openSet[i].hasRequirement || openSet[i].hasRequirement && tempInventory.Contains(openSet[i].requiredItem))
+                if (!openSet[i].hasRequirement || (openSet[i].hasRequirement && inventory.Contains(openSet[i].requiredItem)))
                 {
                     currentAction = openSet[i];
                 }

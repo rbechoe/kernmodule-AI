@@ -140,7 +140,7 @@ public class Astar
     {
         Cell cell = grid[currentNode.position.x, currentNode.position.y];
         int key = (currentNode.position.x - neighbour.position.x) + ((currentNode.position.y - neighbour.position.y) * 2);
-        return (key != 0 && cell.HasWall(WallMapping[key])) ? true : false;
+        return (key != 0 && cell.HasWall(WallMapping[key]));
     }
 
     // Calculate distance between A and B
