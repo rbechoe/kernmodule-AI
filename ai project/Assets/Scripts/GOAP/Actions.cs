@@ -15,7 +15,7 @@ public class Actions : MonoBehaviour
 
     public Action endGoal;
 
-    public Action[] routeToGoal;
+    public List<Action> routeToGoal;
 
     public List<Vector3> pathToActions = new List<Vector3>();
 
@@ -117,6 +117,9 @@ public class Actions : MonoBehaviour
     List<Action> RetracePath(Action goal)
     {
         List<Action> path = new List<Action>();
+
+        routeToGoal = new List<Action>();
+
         Action currentAction = goal;
 
         while (currentAction != null)
@@ -128,6 +131,7 @@ public class Actions : MonoBehaviour
                 {
                     break;
                 }
+                path.Add(currentAction);
                 currentAction = currentAction.parent;
             }
             else
@@ -136,6 +140,7 @@ public class Actions : MonoBehaviour
                 break;
             }
         }
+        routeToGoal.Reverse();
         path.Reverse();
         return path;
     }
