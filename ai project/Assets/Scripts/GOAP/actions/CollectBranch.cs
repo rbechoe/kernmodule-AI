@@ -2,14 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class CollectBranch : MonoBehaviour, IAction
+public class CollectBranch : Action, IAction
 {
-    public string actionName;
-    public int requiredItem;
-    public int itemId;
-    public int actionCost;
-    public bool hasRequirement;
-
     void Start()
     {
         name = "Collect Branch";

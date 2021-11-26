@@ -135,6 +135,7 @@ GameObject:
   - component: {fileID: 464499341}
   - component: {fileID: 464499340}
   - component: {fileID: 464499339}
+  - component: {fileID: 464499343}
   m_Layer: 0
   m_Name: action node
   m_TagString: Untagged
@@ -219,6 +220,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &464499343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464499338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9cde467246b6c24b9c18164793cb91b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: Burned House Down
+  requiredItem: 0
+  itemId: 4
+  actionCost: 4
+  hasRequirement: 0
 --- !u!1 &628819823
 GameObject:
   m_ObjectHideFlags: 0
@@ -231,6 +249,7 @@ GameObject:
   - component: {fileID: 628819826}
   - component: {fileID: 628819825}
   - component: {fileID: 628819824}
+  - component: {fileID: 628819828}
   m_Layer: 0
   m_Name: action node (1)
   m_TagString: Untagged
@@ -315,6 +334,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &628819828
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628819823}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8f466b24d928deb4c8343d7197067d03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: 
+  requiredItem: 0
+  itemId: 0
+  actionCost: 0
+  hasRequirement: 0
 --- !u!1 &641638315
 GameObject:
   m_ObjectHideFlags: 0
@@ -327,6 +363,7 @@ GameObject:
   - component: {fileID: 641638318}
   - component: {fileID: 641638317}
   - component: {fileID: 641638316}
+  - component: {fileID: 641638320}
   m_Layer: 0
   m_Name: action node (3)
   m_TagString: Untagged
@@ -411,6 +448,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &641638320
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641638315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a30a22ba49ef7f4ba1e72094f096bfe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: 
+  requiredItem: 0
+  itemId: 0
+  actionCost: 0
+  hasRequirement: 0
 --- !u!1 &909763823
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,6 +509,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   availableActions: []
+  goal: {fileID: 0}
+  routeToGoal: []
 --- !u!1 &997459186
 GameObject:
   m_ObjectHideFlags: 0
@@ -550,6 +606,7 @@ GameObject:
   - component: {fileID: 1422399408}
   - component: {fileID: 1422399407}
   - component: {fileID: 1422399406}
+  - component: {fileID: 1422399410}
   m_Layer: 0
   m_Name: action node (2)
   m_TagString: Untagged
@@ -634,6 +691,23 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1422399410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1422399405}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86d4fc73859d2e644a31137208c4bdc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: 
+  requiredItem: 0
+  itemId: 0
+  actionCost: 0
+  hasRequirement: 0
 --- !u!1 &1466569623
 GameObject:
   m_ObjectHideFlags: 0
@@ -739,6 +813,7 @@ GameObject:
   - component: {fileID: 1588875963}
   - component: {fileID: 1588875962}
   - component: {fileID: 1588875961}
+  - component: {fileID: 1588875965}
   m_Layer: 0
   m_Name: action node (4)
   m_TagString: Untagged
@@ -823,3 +898,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1588875965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1588875960}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff8b6c553105ee345b87252668e764b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  actionName: 
+  requiredItem: 0
+  itemId: 0
+  actionCost: 0
+  hasRequirement: 0

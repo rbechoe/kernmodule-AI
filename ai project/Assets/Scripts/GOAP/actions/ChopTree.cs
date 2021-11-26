@@ -2,14 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChopTree : MonoBehaviour, IAction
+public class ChopTree : Action, IAction
 {
-    public string actionName;
-    public int requiredItem;
-    public int itemId;
-    public int actionCost;
-    public bool hasRequirement;
-
     void Start()
     {
         name = "Chop Tree";

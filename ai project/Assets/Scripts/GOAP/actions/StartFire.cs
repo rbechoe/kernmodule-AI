@@ -2,14 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class StartFire : MonoBehaviour, IAction
+public class StartFire : Action, IAction
 {
-    public string actionName;
-    public int requiredItem;
-    public int itemId;
-    public int actionCost;
-    public bool hasRequirement;
-
     void Start()
     {
         name = "Start Fire";
