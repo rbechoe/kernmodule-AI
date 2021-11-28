@@ -4,10 +4,12 @@ using System.Collections.Generic;
 
 public class BurnHouse : Action, IAction
 {
-    void Start()
+    void Awake()
     {
         actionName = "Burned House Down";
-        itemId = ItemList.ITEM_FIRE;
+        name = actionName;
+        hasRequirement = true;
+        requiredItem = ItemList.ITEM_FIRE;
         actionCost = 4;
     }
 

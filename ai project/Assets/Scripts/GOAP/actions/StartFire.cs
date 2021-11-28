@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class StartFire : Action, IAction
 {
-    void Start()
+    void Awake()
     {
-        name = "Start Fire";
+        actionName = "Start Fire";
+        name = actionName;
         itemId = ItemList.ITEM_FIRE;
         actionCost = 5;
         hasRequirement = true;

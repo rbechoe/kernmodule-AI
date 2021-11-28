@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class CollectBranch : Action, IAction
 {
-    void Start()
+    void Awake()
     {
-        name = "Collect Branch";
+        actionName = "Collect Branch";
+        name = actionName;
         itemId = ItemList.ITEM_BRANCH;
         actionCost = 2;
     }

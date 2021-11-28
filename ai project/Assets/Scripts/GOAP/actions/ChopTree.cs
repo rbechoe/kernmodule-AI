@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ChopTree : Action, IAction
 {
-    void Start()
+    void Awake()
     {
-        name = "Chop Tree";
+        actionName = "Chop Tree";
+        name = actionName;
         requiredItem = ItemList.ITEM_AXE;
         itemId = ItemList.ITEM_BRANCH;
         actionCost = 10;

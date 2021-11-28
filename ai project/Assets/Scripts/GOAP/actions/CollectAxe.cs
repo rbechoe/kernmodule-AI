@@ -4,9 +4,10 @@ using System.Collections.Generic;
 
 public class CollectAxe : Action, IAction
 {
-    void Start()
+    void Awake()
     {
-        name = "Collect Axe";
+        actionName = "Collect Axe";
+        name = actionName;
         itemId = ItemList.ITEM_AXE;
         actionCost = 3;
         hasRequirement = false;
