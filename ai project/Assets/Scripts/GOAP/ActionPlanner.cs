@@ -2,9 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Actions : MonoBehaviour
+public class ActionPlanner : MonoBehaviour
 {
-    // TODO make scriptable objects for actions to make it super generic
     public Action[] availableActions;
     public Action endGoal;
 
