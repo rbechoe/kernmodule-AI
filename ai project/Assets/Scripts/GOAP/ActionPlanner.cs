@@ -14,8 +14,6 @@ public class ActionPlanner : MonoBehaviour
     private void Start()
     {
         availableActions = FindObjectsOfType<Action>();
-
-        SelectNewGoal();
     }
 
     private void Update()
@@ -23,17 +21,23 @@ public class ActionPlanner : MonoBehaviour
         if (Input.GetKeyUp(KeyCode.Space))
         {
             routeToGoal.Clear();
-            SelectNewGoal();
+            SelectRandomGoal();
         }
     }
 
-    void SelectNewGoal()
+    public void SelectRandomGoal()
     {
         if (routeToGoal.Count == 0)
         {
             endGoal = availableActions[Random.Range(0, availableActions.Length)];
             CalculateOptimalRoute();
         }
+    }
+
+    public void SelectGoal(Action goal)
+    {
+        endGoal = goal;
+        CalculateOptimalRoute();
     }
 
     void CalculateOptimalRoute()
@@ -55,7 +59,6 @@ public class ActionPlanner : MonoBehaviour
                 if (currentAction.hasRequirement && openSet[i].itemId == currentAction.requiredItem)
                 {
                     currentAction = openSet[i];
-                    Debug.Log(currentAction);
                 }
             }
 
