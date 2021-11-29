@@ -16,6 +16,7 @@ public class Action : MonoBehaviour
     {
         get { return GScore + HScore; }
     }
+    [Header("Used for A-Star, do not change!")]
     public int GScore;
     public int HScore;
     public Action parent;

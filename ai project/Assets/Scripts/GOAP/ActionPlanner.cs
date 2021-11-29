@@ -42,10 +42,10 @@ public class ActionPlanner : MonoBehaviour
 
     void CalculateOptimalRoute()
     {
-        pathToActions = FindPathToTarget(transform.position, endGoal, availableActions);
+        pathToActions = FindPathToTarget(endGoal, availableActions);
     }
 
-    public List<Vector3> FindPathToTarget(Vector3 startPosition, Action goal, Action[] actions)
+    public List<Vector3> FindPathToTarget(Action goal, Action[] actions)
     {
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();

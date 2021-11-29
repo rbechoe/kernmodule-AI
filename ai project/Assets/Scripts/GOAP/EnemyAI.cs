@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -8,6 +9,7 @@ public class EnemyAI : MonoBehaviour
     NavMeshAgent NMA;
     ActionPlanner AP;
     GameObject player;
+    List<GameObject> waypoints = new List<GameObject>();
     float distanceFromDest;
     bool followingPlan;
     bool healOnDone;
@@ -25,8 +27,13 @@ public class EnemyAI : MonoBehaviour
     public float sleepTimer = 20;
     public float restFromHeal = 20;
     public float attackCdReset = 2;
+    public float waitTimer = 3;
+    public float waitReset = 3;
 
     [Header("Agent Settings")]
+    public GameObject healthBar;
+    public GameObject waypointParent;
+    public TextMeshPro activityText;
     public float mapSize = 50;
     public float killIncrement = 1;
     public float hungerIncrement = 0.1f;
@@ -44,17 +51,15 @@ public class EnemyAI : MonoBehaviour
     [Range(0, 100)]
     public float desireToRest = 0;
 
-    /* TODO patrol behaviour
-     * follow waypoints around map
-     * once a waypoint has been reached remove it from waypoints list and add it to the bottom of the list
-     * this will result in a clean patrol where the agent can always deviate from the path
-     * */
-
     void Start()
     {
         NMA = gameObject.GetComponent<NavMeshAgent>();
         AP = gameObject.GetComponent<ActionPlanner>();
         player = GameObject.FindGameObjectWithTag("Player");
+        foreach (Transform child in waypointParent.GetComponentsInChildren<Transform>())
+        {
+            waypoints.Add(child.gameObject);
+        }
         GenerateDestination();
     }
 
@@ -84,7 +89,7 @@ public class EnemyAI : MonoBehaviour
     {
         desireToRest += (tiredIncrement + (1 - health / 100)) * Time.deltaTime;
         desireToEat += hungerIncrement * Time.deltaTime;
-        if (Vector3.Distance(transform.position, player.transform.position) < 10)
+        if (Vector3.Distance(transform.position, player.transform.position) < aggroRange)
         {
             desireToKill += killIncrement;
             
@@ -110,9 +115,18 @@ public class EnemyAI : MonoBehaviour
 
         if (Vector3.Distance(transform.position, AP.pathToActions[0]) < 1.5f)
         {
+            if (waitTimer > 0)
+            {
+                waitTimer -= Time.deltaTime;
+                activityText.text = "Doing " + AP.routeToGoal[0].actionName;
+                return;
+            }
+
             Debug.Log("Completed: " + AP.routeToGoal[0].actionName);
             AP.pathToActions.RemoveAt(0);
             AP.routeToGoal.RemoveAt(0);
+            waitTimer = waitReset;
+
             if (AP.pathToActions.Count > 0)
             {
                 NMA.destination = AP.pathToActions[0];
@@ -146,6 +160,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!hasWeapon && !followingPlan)
         {
+            activityText.text = "Planning to murder...";
             AP.SelectGoal(smithing);
             swordOnDone = true;
         }
@@ -154,12 +169,15 @@ public class EnemyAI : MonoBehaviour
         {
             if (Vector3.Distance(transform.position, player.transform.position) < aggroRange)
             {
+                activityText.text = "Desire to kill...";
                 NMA.destination = player.transform.position;
             }
+
             if (Vector3.Distance(transform.position, player.transform.position) < attackRange)
             {
                 if (attackCd < 0)
                 {
+                    activityText.text = "Attack!!";
                     attackCd = attackCdReset;
                     Debug.Log("Attacked player!");
                 }
@@ -175,23 +193,43 @@ public class EnemyAI : MonoBehaviour
         float choice = Random.Range(0, noDesireWeight + desireToEat + desireToRest);
         if (choice > noDesireWeight && choice < noDesireWeight + desireToEat)
         {
+            activityText.text = "Planning to heal...";
             AP.SelectGoal(healing);
             NMA.destination = AP.pathToActions[0];
             idleTimer = eatTimer;
             followingPlan = true;
             healOnDone = true;
+            return;
         }
+
         if (choice > noDesireWeight + desireToEat && choice < noDesireWeight + desireToEat + desireToRest)
         {
+            activityText.text = "Planning to rest...";
             AP.SelectGoal(resting);
             NMA.destination = AP.pathToActions[0];
             idleTimer = sleepTimer;
             followingPlan = true;
             restOnDone = true;
+            return;
         }
 
         // choose new destination if desires are not met
-        Vector3 destination = new Vector3(Random.Range(-mapSize, mapSize), 0, Random.Range(-mapSize, mapSize));
+        // 5% chance to pick a completely random position instead of continuing with the waypoint system
+        Vector3 destination = Vector3.zero;
+        if (Random.Range(0, 100) < 5)
+        {
+            destination = new Vector3(Random.Range(-mapSize, mapSize), 0, Random.Range(-mapSize, mapSize));
+        }
+        else
+        {
+            // add current waypoint to bottom of the list
+            GameObject waypoint = waypoints[0];
+            waypoints.RemoveAt(0);
+            waypoints.Add(waypoint);
+            destination = waypoints[0].transform.position;
+            activityText.text = "Going to " + waypoints[0].name;
+        }
+
         NMA.destination = destination;
         NavMeshPath NMP = new NavMeshPath();
         NMA.CalculatePath(destination, NMP);
