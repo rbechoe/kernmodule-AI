@@ -162,7 +162,11 @@ public class EnemyAI : MonoBehaviour
         {
             activityText.text = "Planning to murder...";
             AP.SelectGoal(smithing);
+            NMA.destination = AP.pathToActions[0];
+            followingPlan = true;
             swordOnDone = true;
+            healOnDone = false;
+            restOnDone = false;
         }
 
         if (hasWeapon)
