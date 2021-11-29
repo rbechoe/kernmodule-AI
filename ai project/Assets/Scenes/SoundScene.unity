@@ -664,7 +664,7 @@ MonoBehaviour:
     m_NumAlphaKeys: 2
   movementSpeed: 5
   followTarget: 0
-  enableMusic: 1
+  enableMusic: 0
   NeighbourDistMult: 10
   speedMult: 40
   flockMult: 20

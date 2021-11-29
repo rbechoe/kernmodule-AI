@@ -12,14 +12,19 @@ public class EnemyAI : MonoBehaviour
     bool followingPlan;
     bool healOnDone;
     bool restOnDone;
+    bool swordOnDone;
+    bool hasWeapon;
     float idleTimer;
+    float attackCd;
 
     [Header("Predefined Actions")]
     public Action healing;
     public Action resting;
+    public Action smithing;
     public float eatTimer = 10;
     public float sleepTimer = 20;
     public float restFromHeal = 20;
+    public float attackCdReset = 2;
 
     [Header("Agent Settings")]
     public float mapSize = 50;
@@ -28,6 +33,8 @@ public class EnemyAI : MonoBehaviour
     public float tiredIncrement = 0.1f;
     public float health = 100;
     public float noDesireWeight = 20;
+    public float aggroRange = 5;
+    public float attackRange = 2;
 
     [Header("Agent Desires")]
     [Range(0, 100)]
@@ -80,6 +87,15 @@ public class EnemyAI : MonoBehaviour
         if (Vector3.Distance(transform.position, player.transform.position) < 10)
         {
             desireToKill += killIncrement;
+            
+            if (desireToKill > 80)
+            {
+                MurderousPlan();
+            }
+        }
+        else
+        {
+            desireToKill -= killIncrement / 10f * Time.deltaTime;
         }
 
         desireToRest = Mathf.Clamp(desireToRest, 0, 100);
@@ -117,8 +133,40 @@ public class EnemyAI : MonoBehaviour
                     desireToRest -= restFromHeal;
                     restOnDone = false;
                 }
+                if (swordOnDone)
+                {
+                    hasWeapon = true;
+                    swordOnDone = false;
+                }
             }
         }
+    }
+
+    void MurderousPlan()
+    {
+        if (!hasWeapon && !followingPlan)
+        {
+            AP.SelectGoal(smithing);
+            swordOnDone = true;
+        }
+
+        if (hasWeapon)
+        {
+            if (Vector3.Distance(transform.position, player.transform.position) < aggroRange)
+            {
+                NMA.destination = player.transform.position;
+            }
+            if (Vector3.Distance(transform.position, player.transform.position) < attackRange)
+            {
+                if (attackCd < 0)
+                {
+                    attackCd = attackCdReset;
+                    Debug.Log("Attacked player!");
+                }
+            }
+        }
+        
+        if (attackCd > 0) attackCd -= Time.deltaTime;
     }
 
     void GenerateDestination()
