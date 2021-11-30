@@ -124,6 +124,12 @@ public class EnemyAI : MonoBehaviour
             waitTimer = AP.waitTimePerAction[0];
             Debug.Log("Completing: " + AP.routeToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
 
+            // if action has requirement remove used items
+            if (AP.routeToGoal.Count > 0 && AP.routeToGoal[0].hasRequirement)
+            {
+                RemoveFromInventory(AP.routeToGoal[0].requiredItem, AP.routeToGoal[0].requiredAmount);
+            }
+
             // update inventory
             if (AP.routeToGoal[0].givenItem != ItemList.Empty)
             {
@@ -136,12 +142,6 @@ public class EnemyAI : MonoBehaviour
                 {
                     AddToInventory(AP.routeToGoal[0].givenItem, 1);
                 }
-            }
-
-            // if action has requirement remove used items
-            if (AP.routeToGoal.Count > 1 && AP.routeToGoal[1].hasRequirement)
-            {
-                RemoveFromInventory(AP.routeToGoal[1].requiredItem, AP.routeToGoal[1].requiredAmount);
             }
 
             AP.waitTimePerAction.RemoveAt(0);
