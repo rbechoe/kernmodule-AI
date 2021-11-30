@@ -10,12 +10,11 @@ public class EnemyAI : MonoBehaviour
     ActionPlanner AP;
     GameObject player;
     List<GameObject> waypoints = new List<GameObject>();
+    Dictionary<ItemList, int> inventory = new Dictionary<ItemList, int>(); // item type, amount
     float distanceFromDest;
     bool followingPlan;
     bool healOnDone;
     bool restOnDone;
-    bool swordOnDone;
-    bool hasWeapon;
     float idleTimer;
     float attackCd;
 
@@ -122,10 +121,32 @@ public class EnemyAI : MonoBehaviour
                 return;
             }
 
-            Debug.Log("Completed: " + AP.routeToGoal[0].actionName);
+            waitTimer = AP.waitTimePerAction[0];
+            Debug.Log("Completing: " + AP.routeToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
+
+            // update inventory
+            if (AP.routeToGoal[0].givenItem != ItemList.Empty)
+            {
+                // add received item(s) to inventory based on if it is the last action or not
+                if (AP.routeToGoal.Count > 1)
+                {
+                    AddToInventory(AP.routeToGoal[0].givenItem, AP.routeToGoal[1].requiredAmount);
+                }
+                else
+                {
+                    AddToInventory(AP.routeToGoal[0].givenItem, 1);
+                }
+            }
+
+            // if action has requirement remove used items
+            if (AP.routeToGoal.Count > 1 && AP.routeToGoal[1].hasRequirement)
+            {
+                RemoveFromInventory(AP.routeToGoal[1].requiredItem, AP.routeToGoal[1].requiredAmount);
+            }
+
+            AP.waitTimePerAction.RemoveAt(0);
             AP.pathToActions.RemoveAt(0);
             AP.routeToGoal.RemoveAt(0);
-            waitTimer = waitReset;
 
             if (AP.pathToActions.Count > 0)
             {
@@ -147,29 +168,23 @@ public class EnemyAI : MonoBehaviour
                     desireToRest -= restFromHeal;
                     restOnDone = false;
                 }
-                if (swordOnDone)
-                {
-                    hasWeapon = true;
-                    swordOnDone = false;
-                }
             }
         }
     }
 
     void MurderousPlan()
     {
-        if (!hasWeapon && !followingPlan)
+        if (!inventory.ContainsKey(ItemList.Iron_Sword) && !followingPlan)
         {
             activityText.text = "Planning to murder...";
-            AP.SelectGoal(smithing);
+            AP.SelectGoal(smithing, this);
             NMA.destination = AP.pathToActions[0];
             followingPlan = true;
-            swordOnDone = true;
             healOnDone = false;
             restOnDone = false;
         }
 
-        if (hasWeapon)
+        if (inventory.ContainsKey(ItemList.Iron_Sword))
         {
             if (Vector3.Distance(transform.position, player.transform.position) < aggroRange)
             {
@@ -198,7 +213,7 @@ public class EnemyAI : MonoBehaviour
         if (choice > noDesireWeight && choice < noDesireWeight + desireToEat)
         {
             activityText.text = "Planning to heal...";
-            AP.SelectGoal(healing);
+            AP.SelectGoal(healing, this);
             NMA.destination = AP.pathToActions[0];
             idleTimer = eatTimer;
             followingPlan = true;
@@ -209,7 +224,7 @@ public class EnemyAI : MonoBehaviour
         if (choice > noDesireWeight + desireToEat && choice < noDesireWeight + desireToEat + desireToRest)
         {
             activityText.text = "Planning to rest...";
-            AP.SelectGoal(resting);
+            AP.SelectGoal(resting, this);
             NMA.destination = AP.pathToActions[0];
             idleTimer = sleepTimer;
             followingPlan = true;
@@ -241,6 +256,47 @@ public class EnemyAI : MonoBehaviour
         {
             Debug.Log("Invalid destionation, calculating new one...");
             GenerateDestination();
+        }
+    }
+
+    // Check if inventory has item and enough of it
+    public bool HasRequirement(ItemList requiredItem, int requiredAmount)
+    {
+        return (inventory.ContainsKey(requiredItem) && inventory[requiredItem] > requiredAmount);
+    }
+
+    // add x items to inventory
+    public void AddToInventory(ItemList item, int amount)
+    {
+        Debug.Log("Added " + item + " " + amount + " times");
+        if (inventory.ContainsKey(item))
+        {
+            inventory[item] += amount;
+        }
+        else
+        {
+            inventory.Add(item, amount);
+        }
+    }
+
+    // remove x items from inventory
+    public void RemoveFromInventory(ItemList item, int amount)
+    {
+        Debug.Log("Removed " + item + " " + amount + " times");
+        inventory[item] -= amount;
+        if (inventory[item] < 0) Debug.Log("Somehow managed to get " + item + " with amount " + inventory[item]);
+    }
+
+    // return amount of item in inventory
+    public int HasAmountOfItem(ItemList item)
+    {
+        if (inventory.ContainsKey(item))
+        {
+            return inventory[item];
+        }
+        else
+        {
+            return 0;
         }
     }
 }

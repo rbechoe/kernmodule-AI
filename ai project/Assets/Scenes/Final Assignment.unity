@@ -169,7 +169,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
-  itemId: 7
+  givenItem: 7
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -273,7 +274,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -377,7 +379,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -580,7 +583,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Axe
-  itemId: 1
+  givenItem: 1
+  givenAmount: 1
   actionCost: 3
   hasRequirement: 0
   requiredItem: 0
@@ -811,7 +815,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Chop Tree
-  itemId: 2
+  givenItem: 2
+  givenAmount: 8
   actionCost: 10
   hasRequirement: 1
   requiredItem: 1
@@ -1387,7 +1392,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
-  itemId: 7
+  givenItem: 7
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -1574,6 +1580,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
+  rotSpeed: 100
 --- !u!1 &511724961
 GameObject:
   m_ObjectHideFlags: 0
@@ -1747,9 +1754,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   availableActions: []
   endGoal: {fileID: 0}
+  waitTimePerAction: []
   routeToGoal: []
   pathToActions: []
-  inventory: 
 --- !u!1 &545582978
 GameObject:
   m_ObjectHideFlags: 0
@@ -1796,7 +1803,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Sleep
-  itemId: 0
+  givenItem: 0
+  givenAmount: 1
   actionCost: 0
   hasRequirement: 0
   requiredItem: 0
@@ -1995,7 +2003,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Cook Food
-  itemId: 6
+  givenItem: 6
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 1
   requiredItem: 5
@@ -2325,7 +2334,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -2542,7 +2552,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Raw Food
-  itemId: 5
+  givenItem: 5
+  givenAmount: 1
   actionCost: 1
   hasRequirement: 1
   requiredItem: 4
@@ -2759,7 +2770,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
-  itemId: 7
+  givenItem: 7
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -2945,7 +2957,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -3244,7 +3257,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
-  itemId: 7
+  givenItem: 7
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -3431,7 +3445,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
-  itemId: 7
+  givenItem: 7
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -3634,7 +3649,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Chop Tree
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 10
   hasRequirement: 1
   requiredItem: 1
@@ -4282,7 +4298,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Chop Tree
-  itemId: 2
+  givenItem: 2
+  givenAmount: 8
   actionCost: 10
   hasRequirement: 1
   requiredItem: 1
@@ -4565,7 +4582,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -4751,7 +4769,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
-  itemId: 7
+  givenItem: 7
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -4937,7 +4956,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -5027,7 +5047,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Eat Food
-  itemId: 0
+  givenItem: 0
+  givenAmount: 1
   actionCost: 4
   hasRequirement: 1
   requiredItem: 6
@@ -5433,7 +5454,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -5537,7 +5559,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Chop Tree
-  itemId: 2
+  givenItem: 2
+  givenAmount: 8
   actionCost: 10
   hasRequirement: 1
   requiredItem: 1
@@ -5627,7 +5650,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -5858,11 +5882,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Smelting
-  itemId: 8
+  givenItem: 8
+  givenAmount: 1
   actionCost: 4
   hasRequirement: 1
   requiredItem: 7
-  requiredAmount: 1
+  requiredAmount: 4
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
@@ -6460,11 +6485,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Smithing
-  itemId: 9
+  givenItem: 9
+  givenAmount: 1
   actionCost: 4
   hasRequirement: 1
   requiredItem: 8
-  requiredAmount: 1
+  requiredAmount: 2
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
@@ -7112,7 +7138,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Collect Branch
-  itemId: 2
+  givenItem: 2
+  givenAmount: 1
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -7315,11 +7342,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   actionName: Start A Fire
-  itemId: 4
+  givenItem: 4
+  givenAmount: 1
   actionCost: 5
   hasRequirement: 1
   requiredItem: 2
-  requiredAmount: 5
+  requiredAmount: 6
   GScore: 0
   HScore: 0
   parent: {fileID: 0}

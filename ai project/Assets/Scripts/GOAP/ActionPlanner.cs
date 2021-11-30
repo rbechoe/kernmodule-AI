@@ -7,45 +7,36 @@ public class ActionPlanner : MonoBehaviour
     public Action[] availableActions;
     public Action endGoal;
 
+    public List<float> waitTimePerAction;
     public List<Action> routeToGoal;
     public List<Vector3> pathToActions = new List<Vector3>();
-    public List<int> inventory = new List<int>();
 
     private void Start()
     {
         availableActions = FindObjectsOfType<Action>();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            routeToGoal.Clear();
-            SelectRandomGoal();
-        }
-    }
-
-    public void SelectRandomGoal()
+    public void SelectRandomGoal(EnemyAI EAI)
     {
         if (routeToGoal.Count == 0)
         {
             endGoal = availableActions[Random.Range(0, availableActions.Length)];
-            CalculateOptimalRoute();
+            CalculateOptimalRoute(EAI);
         }
     }
 
-    public void SelectGoal(Action goal)
+    public void SelectGoal(Action goal, EnemyAI EAI)
     {
         endGoal = goal;
-        CalculateOptimalRoute();
+        CalculateOptimalRoute(EAI);
     }
 
-    void CalculateOptimalRoute()
+    void CalculateOptimalRoute(EnemyAI EAI)
     {
-        pathToActions = FindPathToTarget(endGoal, availableActions);
+        pathToActions = FindPathToTarget(endGoal, EAI);
     }
 
-    public List<Vector3> FindPathToTarget(Action goal, Action[] actions)
+    public List<Vector3> FindPathToTarget(Action goal, EnemyAI EAI)
     {
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();
@@ -56,7 +47,7 @@ public class ActionPlanner : MonoBehaviour
             Action currentAction = openSet[0];
             for (int i = 1; i < openSet.Count; i++)
             {
-                if (currentAction.hasRequirement && openSet[i].itemId == currentAction.requiredItem)
+                if (currentAction.hasRequirement && openSet[i].givenItem == currentAction.requiredItem)
                 {
                     currentAction = openSet[i];
                 }
@@ -65,10 +56,11 @@ public class ActionPlanner : MonoBehaviour
             openSet.Remove(currentAction);
             closedSet.Add(currentAction);
 
-            if (!currentAction.hasRequirement || inventory.Contains(currentAction.requiredItem))
+            // if the action has no requirement or if the enemy has a sufficient amount of the item return a route
+            if (!currentAction.hasRequirement || EAI.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
             {
                 List<Vector3> path = new List<Vector3>();
-                List<Action> nodePath = RetracePath(goal);
+                List<Action> nodePath = RetracePath(goal, EAI);
                 for (int i = 0; i < nodePath.Count; i++)
                 {
                     path.Add(nodePath[i].transform.position);
@@ -85,7 +77,7 @@ public class ActionPlanner : MonoBehaviour
                 }
 
                 int distanceCost = Mathf.RoundToInt(Vector3.Distance(checkable.gameObject.transform.position, currentAction.transform.position));
-                int reqCost = (checkable.hasRequirement && !inventory.Contains(checkable.requiredItem)) ? 10 : 0; // TODO define values properly
+                int reqCost = RequirementCost(checkable, EAI);
                 int costToAction = currentAction.GScore + distanceCost + reqCost;
                 if (costToAction < checkable.GScore || !openSet.Contains(checkable))
                 {
@@ -105,10 +97,32 @@ public class ActionPlanner : MonoBehaviour
         return null;
     }
 
-    List<Action> RetracePath(Action goal)
+    // Calculate costs based on actions
+    public int RequirementCost(Action action, EnemyAI EAI)
+    {
+        int cost = 0;
+
+        if (action.hasRequirement)
+        {
+            if (EAI.HasRequirement(action.requiredItem, 0))
+            {
+                cost = Mathf.CeilToInt((action.requiredAmount - EAI.HasAmountOfItem(action.requiredItem)) / action.givenAmount) * action.actionCost;
+            }
+            else
+            {
+                cost = Mathf.CeilToInt(action.requiredAmount / action.givenAmount) * action.actionCost;
+            }
+        }
+
+        return cost;
+    }
+
+    // Retrace path and make sure that other lists get updated as well
+    List<Action> RetracePath(Action goal, EnemyAI EAI)
     {
         List<Action> path = new List<Action>();
         routeToGoal = new List<Action>();
+        waitTimePerAction = new List<float>();
         Action currentAction = goal;
 
         while (currentAction != null)
@@ -117,6 +131,9 @@ public class ActionPlanner : MonoBehaviour
             {
                 path.Add(currentAction);
                 routeToGoal.Add(currentAction);
+                int actionCost = Mathf.CeilToInt(currentAction.requiredAmount - EAI.HasAmountOfItem(currentAction.givenItem));
+                int waitMultiplier = (currentAction.parent != null) ? currentAction.parent.actionCost : 0;
+                waitTimePerAction.Add(actionCost / currentAction.givenAmount * waitMultiplier);
                 if (currentAction.parent != null)
                 {
                     currentAction = currentAction.parent;
@@ -134,6 +151,7 @@ public class ActionPlanner : MonoBehaviour
         }
 
         routeToGoal.Reverse();
+        waitTimePerAction.Reverse();
         path.Reverse();
         return path;
     }
@@ -144,7 +162,7 @@ public class ActionPlanner : MonoBehaviour
 
         for (int i = 0; i < availableActions.Length; i++)
         {
-            if (availableActions[i].itemId == action.requiredItem)
+            if (availableActions[i].givenItem == action.requiredItem)
             {
                 Action neighbour = availableActions[i];
                 options.Add(neighbour);

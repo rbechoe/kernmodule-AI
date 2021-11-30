@@ -5,10 +5,11 @@ using System.Collections.Generic;
 public class Action : MonoBehaviour
 {
     public string actionName;
-    public int itemId;
+    public ItemList givenItem;
+    public int givenAmount = 1;
     public int actionCost;
     public bool hasRequirement;
-    public int requiredItem;
+    public ItemList requiredItem;
     public int requiredAmount;
 
     // used for A-STAR
@@ -16,9 +17,11 @@ public class Action : MonoBehaviour
     {
         get { return GScore + HScore; }
     }
-    [Header("Used for A-Star, do not change!")]
+    [HideInInspector]
     public int GScore;
+    [HideInInspector]
     public int HScore;
+    [HideInInspector]
     public Action parent;
 
     void Awake()
@@ -26,19 +29,17 @@ public class Action : MonoBehaviour
         name = actionName;
     }
 
-    public void PerformAction()
+    public void PerformAction(EnemyAI EAI)
     {
         if (!hasRequirement)
         {
             Debug.Log("Action performed: " + name);
         }
-    }
 
-    public void PerformAction(List<int> inventory)
-    {
-        if (hasRequirement && inventory.Contains(requiredItem))
+        // TODO required amount implementation in the planning
+        if (hasRequirement && EAI.HasRequirement(requiredItem, requiredAmount))
         {
-            // TODO remove amount
+            // TODO remove amount from inventory
             Debug.Log("Action performed: " + name);
         }
     }
