@@ -8,7 +8,7 @@ public class ActionPlanner : MonoBehaviour
     public Action endGoal;
 
     public List<float> waitTimePerAction;
-    public List<Action> routeToGoal;
+    public List<Action> actionsToGoal;
     public List<Vector3> pathToActions = new List<Vector3>();
 
     private void Start()
@@ -18,7 +18,7 @@ public class ActionPlanner : MonoBehaviour
 
     public void SelectRandomGoal(EnemyAI EAI)
     {
-        if (routeToGoal.Count == 0)
+        if (actionsToGoal.Count == 0)
         {
             endGoal = availableActions[Random.Range(0, availableActions.Length)];
             CalculateOptimalRoute(EAI);
@@ -57,7 +57,7 @@ public class ActionPlanner : MonoBehaviour
             closedSet.Add(currentAction);
 
             // if the action has no requirement or if the enemy has a sufficient amount of the item return a route
-            if (!currentAction.hasRequirement || EAI.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
+            if (!currentAction.hasRequirement || EAI.inventory.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
             {
                 List<Vector3> path = new List<Vector3>();
                 List<Action> nodePath = RetracePath(goal, EAI);
@@ -104,9 +104,9 @@ public class ActionPlanner : MonoBehaviour
 
         if (action.hasRequirement)
         {
-            if (EAI.HasRequirement(action.requiredItem, 0))
+            if (EAI.inventory.HasRequirement(action.requiredItem, 0))
             {
-                cost = Mathf.CeilToInt((action.requiredAmount - EAI.HasAmountOfItem(action.requiredItem)) / action.givenAmount) * action.actionCost;
+                cost = Mathf.CeilToInt((action.requiredAmount - EAI.inventory.HasAmountOfItem(action.requiredItem)) / action.givenAmount) * action.actionCost;
             }
             else
             {
@@ -121,21 +121,27 @@ public class ActionPlanner : MonoBehaviour
     List<Action> RetracePath(Action goal, EnemyAI EAI)
     {
         List<Action> path = new List<Action>();
-        routeToGoal = new List<Action>();
-        waitTimePerAction = new List<float>();
         Action currentAction = goal;
+        Action prevAction = goal;
+        actionsToGoal = new List<Action>();
+        waitTimePerAction = new List<float>();
 
         while (currentAction != null)
         {
             if (!path.Contains(currentAction))
             {
+                // TODO: add each action individually to the list of actions instead of making a large timer
+                int amountToGet = prevAction.requiredAmount - EAI.inventory.HasAmountOfItem(prevAction.requiredItem);
+                float waitTime = Mathf.CeilToInt(amountToGet / currentAction.givenAmount) * currentAction.actionCost;
+                Debug.Log(currentAction.actionName + " takes " + waitTime + " seconds");
+
                 path.Add(currentAction);
-                routeToGoal.Add(currentAction);
-                int actionCost = Mathf.CeilToInt(currentAction.requiredAmount - EAI.HasAmountOfItem(currentAction.givenItem));
-                int waitMultiplier = (currentAction.parent != null) ? currentAction.parent.actionCost : 0;
-                waitTimePerAction.Add(actionCost / currentAction.givenAmount * waitMultiplier);
+                actionsToGoal.Add(currentAction);
+                waitTimePerAction.Add(waitTime);
+
                 if (currentAction.parent != null)
                 {
+                    prevAction = currentAction;
                     currentAction = currentAction.parent;
                 }
                 else
@@ -150,7 +156,7 @@ public class ActionPlanner : MonoBehaviour
             }
         }
 
-        routeToGoal.Reverse();
+        actionsToGoal.Reverse();
         waitTimePerAction.Reverse();
         path.Reverse();
         return path;

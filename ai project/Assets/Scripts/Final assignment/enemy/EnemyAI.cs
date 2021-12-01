@@ -9,14 +9,16 @@ public class EnemyAI : MonoBehaviour
     NavMeshAgent NMA;
     ActionPlanner AP;
     GameObject player;
+    EnemyUtilitySystem EUS;
     List<GameObject> waypoints = new List<GameObject>();
-    Dictionary<ItemList, int> inventory = new Dictionary<ItemList, int>(); // item type, amount
+    public Inventory inventory;
     float distanceFromDest;
     bool followingPlan;
     bool healOnDone;
     bool restOnDone;
     float idleTimer;
     float attackCd;
+    float waitTimer = 3;
 
     [Header("Predefined Actions")]
     public Action healing;
@@ -26,7 +28,6 @@ public class EnemyAI : MonoBehaviour
     public float sleepTimer = 20;
     public float restFromHeal = 20;
     public float attackCdReset = 2;
-    public float waitTimer = 3;
     public float waitReset = 3;
 
     [Header("Agent Settings")]
@@ -34,37 +35,28 @@ public class EnemyAI : MonoBehaviour
     public GameObject waypointParent;
     public TextMeshPro activityText;
     public float mapSize = 50;
-    public float killIncrement = 1;
-    public float hungerIncrement = 0.1f;
-    public float tiredIncrement = 0.1f;
-    public float health = 100;
-    public float noDesireWeight = 20;
-    public float aggroRange = 5;
-    public float attackRange = 2;
-
-    [Header("Agent Desires")]
-    [Range(0, 100)]
-    public float desireToKill = 0;
-    [Range(0, 100)]
-    public float desireToEat = 0;
-    [Range(0, 100)]
-    public float desireToRest = 0;
 
     void Start()
     {
+        inventory = new Inventory();
+        EUS = new EnemyUtilitySystem(this);
         NMA = gameObject.GetComponent<NavMeshAgent>();
         AP = gameObject.GetComponent<ActionPlanner>();
         player = GameObject.FindGameObjectWithTag("Player");
+
+
         foreach (Transform child in waypointParent.GetComponentsInChildren<Transform>())
         {
             waypoints.Add(child.gameObject);
         }
+
         GenerateDestination();
     }
 
     void Update()
     {
         distanceFromDest = Vector3.Distance(transform.position, NMA.destination);
+        EUS.UpdateUtilities(Vector3.Distance(transform.position, player.transform.position));
 
         if (idleTimer > 0 && !followingPlan)
         {
@@ -80,36 +72,12 @@ public class EnemyAI : MonoBehaviour
         {
             UpdatePlan();
         }
-
-        UpdateDesires();
-    }
-
-    void UpdateDesires()
-    {
-        desireToRest += (tiredIncrement + (1 - health / 100)) * Time.deltaTime;
-        desireToEat += hungerIncrement * Time.deltaTime;
-        if (Vector3.Distance(transform.position, player.transform.position) < aggroRange)
-        {
-            desireToKill += killIncrement;
-            
-            if (desireToKill > 80)
-            {
-                MurderousPlan();
-            }
-        }
-        else
-        {
-            desireToKill -= killIncrement / 10f * Time.deltaTime;
-        }
-
-        desireToRest = Mathf.Clamp(desireToRest, 0, 100);
-        desireToEat = Mathf.Clamp(desireToEat, 0, 100);
-        desireToKill = Mathf.Clamp(desireToKill, 0, 100);
-        health = Mathf.Clamp(health, 0, 100);
     }
 
     void UpdatePlan()
     {
+        // TODO check if current goal is still reachable and if path is still most efficient 
+
         if (NMA.destination != AP.pathToActions[0]) NMA.destination = AP.pathToActions[0];
 
         if (Vector3.Distance(transform.position, AP.pathToActions[0]) < 1.5f)
@@ -117,64 +85,52 @@ public class EnemyAI : MonoBehaviour
             if (waitTimer > 0)
             {
                 waitTimer -= Time.deltaTime;
-                activityText.text = "Doing " + AP.routeToGoal[0].actionName;
+                activityText.text = "Doing " + AP.actionsToGoal[0].actionName;
                 return;
             }
 
             waitTimer = AP.waitTimePerAction[0];
-            Debug.Log("Completing: " + AP.routeToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
-
-            // if action has requirement remove used items
-            if (AP.routeToGoal.Count > 0 && AP.routeToGoal[0].hasRequirement)
-            {
-                RemoveFromInventory(AP.routeToGoal[0].requiredItem, AP.routeToGoal[0].requiredAmount);
-            }
+            Debug.Log("Completing: " + AP.actionsToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
 
             // update inventory
-            if (AP.routeToGoal[0].givenItem != ItemList.Empty)
+            if (AP.actionsToGoal.Count > 0)
             {
-                // add received item(s) to inventory based on if it is the last action or not
-                if (AP.routeToGoal.Count > 1)
-                {
-                    AddToInventory(AP.routeToGoal[0].givenItem, AP.routeToGoal[1].requiredAmount);
-                }
-                else
-                {
-                    AddToInventory(AP.routeToGoal[0].givenItem, 1);
-                }
+                AP.actionsToGoal[0].PerformAction(inventory);
             }
 
             AP.waitTimePerAction.RemoveAt(0);
             AP.pathToActions.RemoveAt(0);
-            AP.routeToGoal.RemoveAt(0);
+            AP.actionsToGoal.RemoveAt(0);
 
             if (AP.pathToActions.Count > 0)
             {
                 NMA.destination = AP.pathToActions[0];
+                activityText.text = "Moving to do " + AP.actionsToGoal[0].actionName;
             }
             else
             {
                 followingPlan = false;
                 if (healOnDone)
                 {
-                    health = 100;
-                    desireToEat = 0;
+                    EUS.health = 100;
+                    EUS.desireToEat = 0;
                     healOnDone = false;
                 }
                 if (restOnDone)
                 {
-                    desireToRest = 0;
-                    health += restFromHeal;
-                    desireToRest -= restFromHeal;
+                    EUS.desireToRest = 0;
+                    EUS.health += restFromHeal;
+                    EUS.desireToRest -= restFromHeal;
                     restOnDone = false;
                 }
             }
         }
     }
 
-    void MurderousPlan()
+    // Attack player if it meets requirements, otherwise try to meet requirements
+    public void MurderousPlan()
     {
-        if (!inventory.ContainsKey(ItemList.Iron_Sword) && !followingPlan)
+        if (!inventory.HasItem(ItemList.Iron_Sword) && !followingPlan)
         {
             activityText.text = "Planning to murder...";
             AP.SelectGoal(smithing, this);
@@ -184,15 +140,15 @@ public class EnemyAI : MonoBehaviour
             restOnDone = false;
         }
 
-        if (inventory.ContainsKey(ItemList.Iron_Sword))
+        if (inventory.HasItem(ItemList.Iron_Sword))
         {
-            if (Vector3.Distance(transform.position, player.transform.position) < aggroRange)
+            if (Vector3.Distance(transform.position, player.transform.position) < EUS.aggroRange)
             {
                 activityText.text = "Desire to kill...";
                 NMA.destination = player.transform.position;
             }
 
-            if (Vector3.Distance(transform.position, player.transform.position) < attackRange)
+            if (Vector3.Distance(transform.position, player.transform.position) < EUS.attackRange)
             {
                 if (attackCd < 0)
                 {
@@ -206,11 +162,12 @@ public class EnemyAI : MonoBehaviour
         if (attackCd > 0) attackCd -= Time.deltaTime;
     }
 
+    // Generate destination based on desires and a bit of rng
     void GenerateDestination()
     {
         // set action based on desires
-        float choice = Random.Range(0, noDesireWeight + desireToEat + desireToRest);
-        if (choice > noDesireWeight && choice < noDesireWeight + desireToEat)
+        float choice = Random.Range(0, EUS.noDesireWeight + EUS.desireToEat + EUS.desireToRest);
+        if (choice > EUS.noDesireWeight && choice < EUS.noDesireWeight + EUS.desireToEat)
         {
             activityText.text = "Planning to heal...";
             AP.SelectGoal(healing, this);
@@ -221,7 +178,7 @@ public class EnemyAI : MonoBehaviour
             return;
         }
 
-        if (choice > noDesireWeight + desireToEat && choice < noDesireWeight + desireToEat + desireToRest)
+        if (choice > EUS.noDesireWeight + EUS.desireToEat && choice < EUS.noDesireWeight + EUS.desireToEat + EUS.desireToRest)
         {
             activityText.text = "Planning to rest...";
             AP.SelectGoal(resting, this);
@@ -256,47 +213,6 @@ public class EnemyAI : MonoBehaviour
         {
             Debug.Log("Invalid destionation, calculating new one...");
             GenerateDestination();
-        }
-    }
-
-    // Check if inventory has item and enough of it
-    public bool HasRequirement(ItemList requiredItem, int requiredAmount)
-    {
-        return (inventory.ContainsKey(requiredItem) && inventory[requiredItem] > requiredAmount);
-    }
-
-    // add x items to inventory
-    public void AddToInventory(ItemList item, int amount)
-    {
-        Debug.Log("Added " + item + " " + amount + " times");
-        if (inventory.ContainsKey(item))
-        {
-            inventory[item] += amount;
-        }
-        else
-        {
-            inventory.Add(item, amount);
-        }
-    }
-
-    // remove x items from inventory
-    public void RemoveFromInventory(ItemList item, int amount)
-    {
-        Debug.Log("Removed " + item + " " + amount + " times");
-        inventory[item] -= amount;
-        if (inventory[item] < 0) Debug.Log("Somehow managed to get " + item + " with amount " + inventory[item]);
-    }
-
-    // return amount of item in inventory
-    public int HasAmountOfItem(ItemList item)
-    {
-        if (inventory.ContainsKey(item))
-        {
-            return inventory[item];
-        }
-        else
-        {
-            return 0;
         }
     }
 }

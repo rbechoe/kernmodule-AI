@@ -29,18 +29,32 @@ public class Action : MonoBehaviour
         name = actionName;
     }
 
-    public void PerformAction(EnemyAI EAI)
+    // TODO implement perform action
+    public void PerformAction(Inventory inventory)
     {
         if (!hasRequirement)
         {
             Debug.Log("Action performed: " + name);
+
+            if (givenItem != ItemList.Empty)
+            {
+                inventory.AddToInventory(givenItem, givenAmount);
+            }
         }
 
-        // TODO required amount implementation in the planning
-        if (hasRequirement && EAI.HasRequirement(requiredItem, requiredAmount))
+        if (hasRequirement && inventory.HasRequirement(requiredItem, requiredAmount))
         {
-            // TODO remove amount from inventory
             Debug.Log("Action performed: " + name);
+
+            if (givenItem != ItemList.Empty)
+            {
+                inventory.AddToInventory(givenItem, givenAmount);
+            }
+
+            if (hasRequirement)
+            {
+                inventory.RemoveFromInventory(requiredItem, requiredAmount);
+            }
         }
     }
 }
