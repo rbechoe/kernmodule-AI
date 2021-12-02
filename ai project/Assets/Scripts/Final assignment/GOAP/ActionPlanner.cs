@@ -40,10 +40,7 @@ public class ActionPlanner : MonoBehaviour
     {
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();
-        List<PickedAction> pickedActions = new List<PickedAction>();
-
         openSet.Add(goal);
-        pickedActions.Add(new PickedAction(goal, null, 1));
 
         while (openSet.Count > 0)
         {
@@ -63,10 +60,10 @@ public class ActionPlanner : MonoBehaviour
             if (!currentAction.hasRequirement || EAI.inventory.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
             {
                 List<Vector3> path = new List<Vector3>();
-                List<Action> nodePath = RetracePath(goal, EAI);
-                for (int i = 0; i < nodePath.Count; i++)
+                List<Action> actionPath = RetracePath(goal, EAI);
+                for (int i = 0; i < actionPath.Count; i++)
                 {
-                    path.Add(nodePath[i].transform.position);
+                    path.Add(actionPath[i].transform.position);
                 }
                 return path;
             }
@@ -82,29 +79,20 @@ public class ActionPlanner : MonoBehaviour
                 // TODO: once full path is calculated try path that had branch to see if it is more efficient
                 // TODO: add each action individually to the list of actions instead of making a large timer
                 // OPTIONAL: check if resource is depleted 
-                // store heuristic based on amount of times action has to be done
-
-                // sample data obj
-                // Action action - action linked to it
-                // Action parent - next action compared to this linked to it
-                // int amount - quantity of how many times action has to be performed
-                // int fscore - total score
-                // int gscore - distance
-                // int hscore - total action cost
 
                 int distanceCost = Mathf.RoundToInt(Vector3.Distance(checkable.gameObject.transform.position, currentAction.transform.position));
-                int reqCost = RequirementCost(checkable, EAI);
-                int costToAction = currentAction.GScore + distanceCost + reqCost;
-                if (costToAction < checkable.GScore || !openSet.Contains(checkable))
+                int reqCost = RequirementCost(currentAction, checkable, EAI);
+                int costToAction = currentAction.FScore + reqCost;
+                if (costToAction < checkable.FScore || !openSet.Contains(checkable))
                 {
+                    currentAction.parent = checkable;
                     checkable.GScore = distanceCost;
                     checkable.HScore = costToAction;
-                    currentAction.parent = checkable;
+                    checkable.quantity = CalculateAmountNeeded(currentAction, checkable, EAI);
 
                     if (!openSet.Contains(checkable))
                     {
                         openSet.Add(checkable);
-                        // TODO pickedActions.Add(new PickedAction(goal, null, currentAction.requiredAmount / checkable.givenAmount));
                     }
                 }
             }
@@ -115,23 +103,24 @@ public class ActionPlanner : MonoBehaviour
     }
 
     // Calculate costs based on actions and quantity
-    public int RequirementCost(Action action, EnemyAI EAI)
+    public int RequirementCost(Action requirement, Action giver, EnemyAI EAI)
     {
         int cost = 0;
 
-        if (action.hasRequirement)
+        if (requirement.hasRequirement)
         {
-            if (EAI.inventory.HasRequirement(action.requiredItem, 0))
-            {
-                cost = Mathf.CeilToInt((action.requiredAmount - EAI.inventory.HasAmountOfItem(action.requiredItem)) / action.givenAmount) * action.actionCost;
-            }
-            else
-            {
-                cost = Mathf.CeilToInt(action.requiredAmount / action.givenAmount) * action.actionCost;
-            }
+            cost = CalculateAmountNeeded(requirement, giver, EAI) * giver.actionCost;
         }
 
         return cost;
+    }
+
+    // Calculate how many items are needed
+    public int CalculateAmountNeeded(Action requirement, Action giver, EnemyAI EAI)
+    {
+        int amount = 0;
+        amount = Mathf.CeilToInt((requirement.requiredAmount - EAI.inventory.HasAmountOfItem(requirement.requiredItem)) / giver.givenAmount);
+        return amount;
     }
 
     // Retrace path and make sure that other lists get updated as well
@@ -203,27 +192,5 @@ public class ActionPlanner : MonoBehaviour
         }
 
         return options;
-    }
-}
-
-public class PickedAction
-{
-    public Action action; // actual action
-    public Action parent; // the action that required this action
-    public int quantity; // amount of times this action has to be repeated
-
-    public float FScore 
-    {
-        get { return GScore + HScore; }
-    }
-    public int GScore; // distance to action
-    public int HScore; // total action cost
-
-    public PickedAction() { }
-    public PickedAction(Action action, Action parent, int quantity)
-    {
-        this.action = action;
-        this.parent = parent;
-        this.quantity = quantity;
     }
 }

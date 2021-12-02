@@ -13,7 +13,7 @@ public class Action : MonoBehaviour
     public int requiredAmount;
 
     // used for A-STAR
-    public float FScore
+    public int FScore
     {
         get { return GScore + HScore; }
     }
@@ -23,6 +23,8 @@ public class Action : MonoBehaviour
     public int HScore;
     [HideInInspector]
     public Action parent;
+    [HideInInspector]
+    public int quantity; 
 
     void Awake()
     {
