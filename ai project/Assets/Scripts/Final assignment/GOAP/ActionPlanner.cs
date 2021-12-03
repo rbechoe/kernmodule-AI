@@ -77,7 +77,11 @@ public class ActionPlanner : MonoBehaviour
                 }
 
                 // TODO: once full path is calculated try path that had branch to see if it is more efficient
+                // store each path in a dictionary which also has the total action cost and then pick the lowest costing one
+                // after reaching the first path give a hard cap to calculation time in order to prevent AI from thinking for too long
+
                 // TODO: add each action individually to the list of actions instead of making a large timer
+
                 // OPTIONAL: check if resource is depleted 
 
                 int distanceCost = Mathf.RoundToInt(Vector3.Distance(checkable.gameObject.transform.position, currentAction.transform.position));
