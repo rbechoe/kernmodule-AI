@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Inventory
@@ -25,6 +26,7 @@ public class Inventory
         }
     }
 
+    // check if requirement has been met
     public bool HasRequirement(ItemList requiredItem, int requiredAmount)
     {
         return (items.ContainsKey(requiredItem) && items[requiredItem] > requiredAmount);
@@ -50,5 +52,17 @@ public class Inventory
         Debug.Log("Removed " + item + " " + amount + " times");
         items[item] -= amount;
         if (items[item] < 0) Debug.Log("Somehow managed to get " + item + " with amount " + items[item]);
+    }
+
+    // return all keys
+    public ItemList[] GetKeys()
+    {
+        return items.Keys.ToArray();
+    }
+
+    // return all values
+    public int[] GetValues()
+    {
+        return items.Values.ToArray();
     }
 }

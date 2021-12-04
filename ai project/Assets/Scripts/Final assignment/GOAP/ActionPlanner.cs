@@ -41,6 +41,7 @@ public class ActionPlanner : MonoBehaviour
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();
         openSet.Add(goal);
+        goal.quantityStack = goal.requiredAmount;
 
         while (openSet.Count > 0)
         {
@@ -90,6 +91,8 @@ public class ActionPlanner : MonoBehaviour
                 if (costToAction < checkable.FScore || !openSet.Contains(checkable))
                 {
                     currentAction.parent = checkable;
+                    checkable.child = currentAction;
+                    checkable.quantityStack = currentAction.quantityStack * checkable.requiredAmount;
                     checkable.GScore = distanceCost;
                     checkable.HScore = costToAction;
                     checkable.quantity = CalculateAmountNeeded(currentAction, checkable, EAI);
@@ -123,7 +126,7 @@ public class ActionPlanner : MonoBehaviour
     public int CalculateAmountNeeded(Action requirement, Action giver, EnemyAI EAI)
     {
         int amount = 0;
-        amount = Mathf.CeilToInt((requirement.requiredAmount - EAI.inventory.HasAmountOfItem(requirement.requiredItem)) / giver.givenAmount);
+        amount = Mathf.CeilToInt((requirement.requiredAmount * requirement.quantityStack - EAI.inventory.HasAmountOfItem(requirement.requiredItem)) / giver.givenAmount);
         return amount;
     }
 
@@ -140,12 +143,11 @@ public class ActionPlanner : MonoBehaviour
         {
             if (!path.Contains(currentAction))
             {
-                Debug.Log(currentAction.actionName + " takes " + currentAction.actionCost + " seconds");
+                int amount = (currentAction.child != null) ? currentAction.child.quantityStack : 1;
 
                 if (prevAction != currentAction)
                 {
-                    // TODO fix with amount already in inventory
-                    for (int i = 0; i < (prevAction.requiredAmount - EAI.inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
+                    for (int i = 0; i < (amount - EAI.inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
                     {
                         path.Add(currentAction);
                         actionsToGoal.Add(currentAction);

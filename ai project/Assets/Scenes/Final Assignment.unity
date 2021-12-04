@@ -178,6 +178,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &13127891
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -283,6 +285,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &76614824
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -388,6 +392,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &93639103
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -592,6 +598,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &102654691
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -824,6 +832,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &150091704
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1401,6 +1411,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &377377242
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1801,6 +1813,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &545582981
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2001,6 +2015,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &644409409
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2332,6 +2348,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &748543958
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2550,6 +2568,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &775684340
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2768,6 +2788,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &871210440
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2955,6 +2977,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &914348606
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3255,6 +3279,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &982697430
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3443,6 +3469,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1003837592
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3647,6 +3675,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1015464126
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4296,6 +4326,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1160094785
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4580,6 +4612,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1310471871
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4767,6 +4801,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1342648792
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4954,6 +4990,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1416945101
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5045,6 +5083,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1446325071
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5452,6 +5492,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1583791631
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5557,6 +5599,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1586302484
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5648,6 +5692,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1640106186
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5880,6 +5926,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1692334620
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6483,6 +6531,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &1910036926
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7136,6 +7186,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &2081118459
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -7340,6 +7392,8 @@ MonoBehaviour:
   GScore: 0
   HScore: 0
   parent: {fileID: 0}
+  quantity: 0
+  quantityStack: 0
 --- !u!23 &2117633395
 MeshRenderer:
   m_ObjectHideFlags: 0

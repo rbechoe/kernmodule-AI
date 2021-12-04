@@ -24,14 +24,17 @@ public class Action : MonoBehaviour
     [HideInInspector]
     public Action parent;
     [HideInInspector]
-    public int quantity; 
+    public Action child;
+    [HideInInspector]
+    public int quantity = 1;
+    [HideInInspector]
+    public int quantityStack; // stores total amount of quantity during this calculation in order to calculate actual quantity
 
     void Awake()
     {
         name = actionName;
     }
-
-    // TODO implement perform action
+    
     public void PerformAction(Inventory inventory)
     {
         if (!hasRequirement)

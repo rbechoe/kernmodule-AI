@@ -36,6 +36,10 @@ public class EnemyAI : MonoBehaviour
     public TextMeshPro activityText;
     public float mapSize = 50;
 
+    [Header("Agent Inventory")]
+    public ItemList[] items;
+    public int[] amounts;
+
     void Start()
     {
         inventory = new Inventory();
@@ -43,8 +47,7 @@ public class EnemyAI : MonoBehaviour
         NMA = gameObject.GetComponent<NavMeshAgent>();
         AP = gameObject.GetComponent<ActionPlanner>();
         player = GameObject.FindGameObjectWithTag("Player");
-
-
+        
         foreach (Transform child in waypointParent.GetComponentsInChildren<Transform>())
         {
             waypoints.Add(child.gameObject);
@@ -55,6 +58,8 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        items = inventory.GetKeys();
+        amounts = inventory.GetValues();
         distanceFromDest = Vector3.Distance(transform.position, NMA.destination);
         EUS.UpdateUtilities(Vector3.Distance(transform.position, player.transform.position));
 
@@ -76,8 +81,6 @@ public class EnemyAI : MonoBehaviour
 
     void UpdatePlan()
     {
-        // TODO check if current goal is still reachable and if path is still most efficient 
-
         if (NMA.destination != AP.pathToActions[0]) NMA.destination = AP.pathToActions[0];
 
         if (Vector3.Distance(transform.position, AP.pathToActions[0]) < 1.5f)
@@ -88,6 +91,10 @@ public class EnemyAI : MonoBehaviour
                 activityText.text = "Doing " + AP.actionsToGoal[0].actionName;
                 return;
             }
+
+            // TODO check if current goal is still reachable and if path is still most efficient 
+            //AP.SelectGoal(AP.actionsToGoal[AP.actionsToGoal.Count - 1], this);
+            // BUG: somehow doesnt get past 2nd smelting in order to smith sword
 
             waitTimer = AP.waitTimePerAction[0];
             Debug.Log("Completing: " + AP.actionsToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
