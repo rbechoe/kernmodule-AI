@@ -45,6 +45,8 @@ public class Action : MonoBehaviour
             {
                 inventory.AddToInventory(givenItem, givenAmount);
             }
+
+            return;
         }
 
         if (hasRequirement && inventory.HasRequirement(requiredItem, requiredAmount))
@@ -60,6 +62,10 @@ public class Action : MonoBehaviour
             {
                 inventory.RemoveFromInventory(requiredItem, requiredAmount);
             }
+
+            return;
         }
+
+        Debug.Log("Something went wrong when trying to complete action!");
     }
 }

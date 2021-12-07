@@ -23,7 +23,7 @@ public class EnemyUtilitySystem
         desireToKill = 0;
         desireToEat = 0;
         desireToRest = 0;
-        noDesireWeight = 50;
+        noDesireWeight = 100;
         health = 100;
         aggroRange = 5;
         attackRange = 2;

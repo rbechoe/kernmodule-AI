@@ -29,7 +29,7 @@ public class Inventory
     // check if requirement has been met
     public bool HasRequirement(ItemList requiredItem, int requiredAmount)
     {
-        return (items.ContainsKey(requiredItem) && items[requiredItem] > requiredAmount);
+        return (items.ContainsKey(requiredItem) && items[requiredItem] >= requiredAmount);
     }
 
     // add x items to inventory

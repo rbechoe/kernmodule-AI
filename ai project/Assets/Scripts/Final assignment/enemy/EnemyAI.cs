@@ -40,6 +40,14 @@ public class EnemyAI : MonoBehaviour
     public ItemList[] items;
     public int[] amounts;
 
+    [Header("Agent Statistics")]
+    [Range(0, 100)]
+    public float anger;
+    [Range(0, 100)]
+    public float hunger;
+    [Range(0, 100)]
+    public float fatigue;
+
     void Start()
     {
         inventory = new Inventory();
@@ -60,6 +68,10 @@ public class EnemyAI : MonoBehaviour
     {
         items = inventory.GetKeys();
         amounts = inventory.GetValues();
+        anger = EUS.desireToKill;
+        hunger = EUS.desireToEat;
+        fatigue = EUS.desireToRest;
+
         distanceFromDest = Vector3.Distance(transform.position, NMA.destination);
         EUS.UpdateUtilities(Vector3.Distance(transform.position, player.transform.position));
 
@@ -94,7 +106,6 @@ public class EnemyAI : MonoBehaviour
 
             // TODO check if current goal is still reachable and if path is still most efficient 
             //AP.SelectGoal(AP.actionsToGoal[AP.actionsToGoal.Count - 1], this);
-            // BUG: somehow doesnt get past 2nd smelting in order to smith sword
 
             waitTimer = AP.waitTimePerAction[0];
             Debug.Log("Completing: " + AP.actionsToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
@@ -103,6 +114,7 @@ public class EnemyAI : MonoBehaviour
             if (AP.actionsToGoal.Count > 0)
             {
                 AP.actionsToGoal[0].PerformAction(inventory);
+                EUS.desireToRest += AP.actionsToGoal[0].actionCost;
             }
 
             AP.waitTimePerAction.RemoveAt(0);
