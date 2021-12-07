@@ -27,7 +27,7 @@ public class EnemyUtilitySystem
         noDesireWeight = 100;
         health = 100;
         aggroRange = 5;
-        attackRange = 3;
+        attackRange = 2;
     }
 
     // update enemy desires

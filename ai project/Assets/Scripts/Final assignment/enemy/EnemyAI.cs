@@ -189,21 +189,21 @@ public class EnemyAI : MonoBehaviour
 
         if (inventory.HasItem(ItemList.Iron_Sword))
         {
-            if (Vector3.Distance(transform.position, player.transform.position) < EUS.aggroRange)
-            {
-                activityText.text = "Desire to kill...";
-                NMA.destination = player.transform.position;
-            }
-
             if (Vector3.Distance(transform.position, player.transform.position) < EUS.attackRange)
             {
-                if (attackCd < 0)
+                if (attackCd <= 0)
                 {
+                    NMA.destination = transform.position;
                     activityText.text = "Attack!!";
                     attackCd = attackCdReset;
                     PC.TakeDamage(gameObject);
                     Debug.Log("Attacked player!");
                 }
+            }
+            else if (Vector3.Distance(transform.position, player.transform.position) < EUS.aggroRange)
+            {
+                activityText.text = "Desire to kill...";
+                NMA.destination = player.transform.position;
             }
         }
     }

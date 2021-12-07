@@ -10,17 +10,19 @@ public class AllyAI : MonoBehaviour
     GameObject player;
     PlayerController PC;
     public Inventory inventory;
+    public GameObject destObj;
     bool followingPlan;
     float idleTimer;
     float waitTimer = 3;
     float bombCd = 2;
     float stalkRange = 5;
+    float pathCd = 0;
 
     [Header("Agent Inventory")]
     public ItemList[] items;
     public int[] amounts;
 
-    bool hardlocked;
+    public bool hardlocked;
 
     void Start()
     {
@@ -34,7 +36,7 @@ public class AllyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!PC.attacked || hardlocked)
+        if (!PC.attacked)
         {
             if (Vector3.Distance(player.transform.position, transform.position) > stalkRange)
             {
@@ -47,7 +49,7 @@ public class AllyAI : MonoBehaviour
         }
         else
         {
-            if (!hardlocked)
+            if (pathCd <= 0)
             {
                 Collider[] hits = Physics.OverlapSphere(transform.position, 100f);
                 GameObject chosenObject = null;
@@ -65,7 +67,7 @@ public class AllyAI : MonoBehaviour
                 // using local scale because all colliders are scaled this gives an accurate cover coordinate that is not squished against the wall
                 float newX = 0;
                 float newZ = 0;
-                if (PC.attacker.transform.position.x > chosenObject.transform.position.x)
+                /*if (PC.attacker.transform.position.x > chosenObject.transform.position.x)
                 {
                     newX = PC.attacker.transform.position.x - chosenObject.transform.position.x;
                     newX -= chosenObject.transform.localScale.x / 2f + 1;
@@ -85,11 +87,23 @@ public class AllyAI : MonoBehaviour
                     newZ = PC.attacker.transform.position.z + chosenObject.transform.position.z;
                     newZ += chosenObject.transform.localScale.z / 2f + 1;
                 }
-                NMA.destination = new Vector3(newX, chosenObject.transform.position.y, newZ);
-                // TODO calculate path to see if position is reachable, otherwise pick new cover object
-            }
-            hardlocked = true;
+                NMA.destination = new Vector3(newX, chosenObject.transform.position.y, newZ);*/
+                NMA.destination = chosenObject.transform.position;
+                Debug.Log(chosenObject.name);
+                // TODO BUG: either overwrites received position or gets position of wrong object
 
+
+
+                // TODO calculate path to see if position is reachable, otherwise pick new cover object
+
+                pathCd = 5;
+            }
+            else
+            {
+                pathCd -= Time.deltaTime;
+            }
         }
+
+        destObj.transform.position = NMA.destination;
     }
 }
