@@ -10,4 +10,5 @@ public enum ItemList
     Iron_Ore = 7,
     Iron_Bar = 8,
     Iron_Sword = 9,
+    Smoke_Bomb = 10,
 }
