@@ -39,8 +39,6 @@ public class Action : MonoBehaviour
     {
         if (!hasRequirement)
         {
-            Debug.Log("Action performed: " + name);
-
             if (givenItem != ItemList.Empty)
             {
                 inventory.AddToInventory(givenItem, givenAmount);
@@ -51,8 +49,6 @@ public class Action : MonoBehaviour
 
         if (hasRequirement && inventory.HasRequirement(requiredItem, requiredAmount))
         {
-            Debug.Log("Action performed: " + name);
-
             if (givenItem != ItemList.Empty)
             {
                 inventory.AddToInventory(givenItem, givenAmount);
@@ -66,6 +62,6 @@ public class Action : MonoBehaviour
             return;
         }
 
-        Debug.Log("Something went wrong when trying to complete action!");
+        Debug.Log("Something went wrong when trying to complete action: " + actionName);
     }
 }

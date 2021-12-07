@@ -12,6 +12,7 @@ public class EnemyAI : MonoBehaviour
     EnemyUtilitySystem EUS;
     List<GameObject> waypoints = new List<GameObject>();
     Material healthMat;
+    PlayerController PC;
     public Inventory inventory;
     float distanceFromDest;
     bool followingPlan;
@@ -20,6 +21,7 @@ public class EnemyAI : MonoBehaviour
     float idleTimer;
     float attackCd;
     float waitTimer = 3;
+    public bool attackPlayer;
 
     [Header("Predefined Actions")]
     public Action healing;
@@ -58,6 +60,7 @@ public class EnemyAI : MonoBehaviour
         NMA = gameObject.GetComponent<NavMeshAgent>();
         AP = gameObject.GetComponent<ActionPlanner>();
         player = GameObject.FindGameObjectWithTag("Player");
+        PC = player.GetComponent<PlayerController>();
         healthMat = healthBar.GetComponent<Renderer>().material;
         
         foreach (Transform child in waypointParent.GetComponentsInChildren<Transform>())
@@ -75,6 +78,12 @@ public class EnemyAI : MonoBehaviour
         if (idleTimer > 0 && !followingPlan)
         {
             idleTimer -= Time.deltaTime;
+        }
+
+        if (attackPlayer || attackCd > 0)
+        {
+            MurderousPlan();
+            return;
         }
 
         if (distanceFromDest < 1.5f && !followingPlan && idleTimer <= 0)
@@ -121,7 +130,6 @@ public class EnemyAI : MonoBehaviour
             //AP.SelectGoal(AP.actionsToGoal[AP.actionsToGoal.Count - 1], this);
 
             waitTimer = AP.waitTimePerAction[0];
-            Debug.Log("Completing: " + AP.actionsToGoal[0].actionName + " in aprox " + waitTimer + " seconds");
 
             // update inventory
             if (AP.actionsToGoal.Count > 0)
@@ -160,9 +168,14 @@ public class EnemyAI : MonoBehaviour
     }
 
     // Attack player if it meets requirements, otherwise try to meet requirements
-    public void MurderousPlan()
+    void MurderousPlan()
     {
         NMA.speed = 5;
+        if (attackCd > 0)
+        {
+            attackCd -= Time.deltaTime;
+            return;
+        }
 
         if (!inventory.HasItem(ItemList.Iron_Sword) && !followingPlan)
         {
@@ -188,12 +201,11 @@ public class EnemyAI : MonoBehaviour
                 {
                     activityText.text = "Attack!!";
                     attackCd = attackCdReset;
+                    PC.TakeDamage(gameObject);
                     Debug.Log("Attacked player!");
                 }
             }
         }
-        
-        if (attackCd > 0) attackCd -= Time.deltaTime;
     }
 
     // Generate destination based on desires and a bit of rng

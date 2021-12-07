@@ -8,6 +8,7 @@ public class EnemyUtilitySystem
     float killIncrement = 1;
     float hungerIncrement = 0.1f;
     float tiredIncrement = 0.1f;
+    float hpDecrement = 10000f;
 
     public float health { get; set; }
     public float aggroRange { get; set; }
@@ -26,7 +27,7 @@ public class EnemyUtilitySystem
         noDesireWeight = 100;
         health = 100;
         aggroRange = 5;
-        attackRange = 2;
+        attackRange = 3;
     }
 
     // update enemy desires
@@ -34,7 +35,7 @@ public class EnemyUtilitySystem
     {
         desireToRest += (tiredIncrement + (1 - health / 100)) * Time.deltaTime;
         desireToEat += hungerIncrement * Time.deltaTime;
-        health -= desireToEat / 1000f;
+        health -= desireToEat / hpDecrement;
 
         if (playerDistance < aggroRange)
         {
@@ -42,12 +43,13 @@ public class EnemyUtilitySystem
 
             if (desireToKill > 80)
             {
-                EAI.MurderousPlan();
+                EAI.attackPlayer = true;
             }
         }
         else
         {
             desireToKill -= killIncrement / 10f * Time.deltaTime;
+            EAI.attackPlayer = false;
         }
 
         desireToRest = Mathf.Clamp(desireToRest, 0, 100);
