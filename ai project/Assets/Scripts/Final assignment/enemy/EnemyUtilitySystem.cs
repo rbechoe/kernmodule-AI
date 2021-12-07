@@ -34,6 +34,7 @@ public class EnemyUtilitySystem
     {
         desireToRest += (tiredIncrement + (1 - health / 100)) * Time.deltaTime;
         desireToEat += hungerIncrement * Time.deltaTime;
+        health -= desireToEat / 1000f;
 
         if (playerDistance < aggroRange)
         {
@@ -52,6 +53,6 @@ public class EnemyUtilitySystem
         desireToRest = Mathf.Clamp(desireToRest, 0, 100);
         desireToEat = Mathf.Clamp(desireToEat, 0, 100);
         desireToKill = Mathf.Clamp(desireToKill, 0, 100);
-        health = Mathf.Clamp(health, 0, 100);
+        health = Mathf.Clamp(health, 1, 100);
     }
 }

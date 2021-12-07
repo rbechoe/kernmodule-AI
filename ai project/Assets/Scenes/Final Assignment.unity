@@ -1721,12 +1721,16 @@ MonoBehaviour:
   restFromHeal: 20
   attackCdReset: 2
   waitReset: 3
-  healthBar: {fileID: 589968691}
+  healthBar: {fileID: 1100172399}
   waypointParent: {fileID: 2001888175}
   activityText: {fileID: 1135315155}
   mapSize: 50
   items: 
   amounts: 
+  hp: 0
+  anger: 0
+  hunger: 0
+  fatigue: 0
 --- !u!195 &511724967
 NavMeshAgent:
   m_ObjectHideFlags: 0
