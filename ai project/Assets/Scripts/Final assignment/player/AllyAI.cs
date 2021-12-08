@@ -11,6 +11,7 @@ public class AllyAI : MonoBehaviour
     PlayerController PC;
     public Inventory inventory;
     public GameObject destObj;
+    public GameObject bombPrefab;
     bool followingPlan;
     bool coverDest;
     float idleTimer;
