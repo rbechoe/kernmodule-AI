@@ -56,6 +56,10 @@ public class AllyAI : MonoBehaviour
                 float closestDistance = float.MaxValue;
                 foreach(Collider hit in hits)
                 {
+                    if (hit.GetComponent<NavMeshAgent>() || hit.CompareTag("Player"))
+                    {
+                        continue; // skip objects that should not be used for hiding
+                    }
                     float dist = Vector3.Distance(hit.transform.position, PC.attacker.transform.position);
                     if (dist < closestDistance)
                     {
@@ -63,36 +67,39 @@ public class AllyAI : MonoBehaviour
                     }
                 }
                 
+                // TODO cast raycast to see if it can see target, if yes find new destination if already at destination
                 // method used to calculate position behind cover compared to enemy position vs cover position
-                // using local scale because all colliders are scaled this gives an accurate cover coordinate that is not squished against the wall
-                float newX = 0;
-                float newZ = 0;
-                /*if (PC.attacker.transform.position.x > chosenObject.transform.position.x)
+                Vector3 newPos = chosenObject.transform.position;
+                float newX = newPos.x;
+                float newZ = newPos.z;
+                Vector3 diffA = (PC.attacker.transform.position - newPos) / 2f;
+                Vector3 diffB = (newPos - PC.attacker.transform.position) / 2f;
+                // enemy is top right
+                if (PC.attacker.transform.position.x > newX && PC.attacker.transform.position.z > newZ)
                 {
-                    newX = PC.attacker.transform.position.x - chosenObject.transform.position.x;
-                    newX -= chosenObject.transform.localScale.x / 2f + 1;
+                    newX -= Mathf.Abs(diffA.x);
+                    newZ -= Mathf.Abs(diffA.z);
                 }
-                else
+                // enemy is bottom left
+                if (PC.attacker.transform.position.x < newX && PC.attacker.transform.position.z < newZ)
                 {
-                    newX = PC.attacker.transform.position.x + chosenObject.transform.position.x;
-                    newX += chosenObject.transform.localScale.x / 2f + 1;
+                    newX += Mathf.Abs(diffB.x);
+                    newZ += Mathf.Abs(diffB.z);
                 }
-                if (PC.attacker.transform.position.z > chosenObject.transform.position.z)
+                // enemy is bottom right
+                if (PC.attacker.transform.position.x > newX && PC.attacker.transform.position.z < newZ)
                 {
-                    newZ = PC.attacker.transform.position.z - chosenObject.transform.position.z;
-                    newZ -= chosenObject.transform.localScale.z / 2f + 1;
+                    newX -= Mathf.Abs(diffA.x);
+                    newZ += Mathf.Abs(diffB.z);
                 }
-                else
+                // enemy is top left
+                if (PC.attacker.transform.position.x < newX && PC.attacker.transform.position.z > newZ)
                 {
-                    newZ = PC.attacker.transform.position.z + chosenObject.transform.position.z;
-                    newZ += chosenObject.transform.localScale.z / 2f + 1;
+                    newX += Mathf.Abs(diffB.x);
+                    newZ -= Mathf.Abs(diffA.z);
                 }
-                NMA.destination = new Vector3(newX, chosenObject.transform.position.y, newZ);*/
-                NMA.destination = chosenObject.transform.position;
-                Debug.Log(chosenObject.name);
-                // TODO BUG: either overwrites received position or gets position of wrong object
-
-
+                newPos = new Vector3(newX, chosenObject.transform.position.y, newZ);
+                NMA.destination = newPos;
 
                 // TODO calculate path to see if position is reachable, otherwise pick new cover object
 

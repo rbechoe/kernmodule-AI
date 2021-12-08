@@ -170,7 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
   givenItem: 7
-  givenAmount: 1
+  givenAmount: 8
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -1818,7 +1818,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
   givenItem: 7
-  givenAmount: 1
+  givenAmount: 8
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -3209,7 +3209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
   givenItem: 7
-  givenAmount: 1
+  givenAmount: 8
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -3702,7 +3702,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
   givenItem: 7
-  givenAmount: 1
+  givenAmount: 8
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -3893,7 +3893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
   givenItem: 7
-  givenAmount: 1
+  givenAmount: 8
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
@@ -5229,7 +5229,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   actionName: Collect Iron Ore
   givenItem: 7
-  givenAmount: 1
+  givenAmount: 8
   actionCost: 2
   hasRequirement: 0
   requiredItem: 0
