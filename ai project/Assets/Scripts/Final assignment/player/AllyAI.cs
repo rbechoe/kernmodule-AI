@@ -15,7 +15,7 @@ public class AllyAI : MonoBehaviour
     bool coverDest;
     float idleTimer;
     float waitTimer = 3;
-    float bombCd = 2;
+    float bombCd = 5;
     float stalkRange = 5;
     float pathCd = 0;
 
@@ -71,8 +71,9 @@ public class AllyAI : MonoBehaviour
                         chosenObject = hit.gameObject;
                     }
                 }
-                
+
                 // method used to calculate position behind cover compared to enemy position vs cover position
+                // reference: https://gyazo.com/ce97aeb37c1efc8a0b46dc98043c9778
                 Vector3 newPos = chosenObject.transform.position;
                 float newX = newPos.x;
                 float newZ = newPos.z;
@@ -116,7 +117,26 @@ public class AllyAI : MonoBehaviour
             // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
             if (coverDest && Physics.Linecast(transform.position, enemyPos) && Vector3.Distance(transform.position, NMA.destination) < 1)
             {
-                // TODO if ally has no bombs go search for them!
+                if (!inventory.HasItem(ItemList.Smoke_Bomb))
+                {
+                    // TODO give goal to find 3 bombs
+                    AP.CollectSpecificItem(ItemList.Smoke_Bomb, 3, inventory);
+                    followingPlan = true;
+                }
+                else
+                {
+                    if (idleTimer < 0)
+                    {
+                        // TODO throw bomb to enemy
+                        // TODO https://www.youtube.com/watch?v=03GHtGyEHas
+                        idleTimer = bombCd;
+                        Debug.Log("Throwing bomb!");
+                    }
+                    else
+                    {
+                        idleTimer -= Time.deltaTime;
+                    }
+                }
             }
         }
 

@@ -180,7 +180,7 @@ public class EnemyAI : MonoBehaviour
         if (!inventory.HasItem(ItemList.Iron_Sword) && !followingPlan)
         {
             activityText.text = "Planning to murder...";
-            AP.SelectGoal(smithing, this);
+            AP.SelectGoal(smithing, inventory);
             NMA.destination = AP.pathToActions[0];
             followingPlan = true;
             healOnDone = false;
@@ -218,7 +218,7 @@ public class EnemyAI : MonoBehaviour
         if (choice > EUS.noDesireWeight && choice < EUS.noDesireWeight + EUS.desireToEat && EUS.health < 70 && EUS.desireToEat > 10)
         {
             activityText.text = "Planning to heal...";
-            AP.SelectGoal(healing, this);
+            AP.SelectGoal(healing, inventory);
             NMA.destination = AP.pathToActions[0];
             idleTimer = eatTimer;
             followingPlan = true;
@@ -229,7 +229,7 @@ public class EnemyAI : MonoBehaviour
         if (choice > EUS.noDesireWeight + EUS.desireToEat && choice < EUS.noDesireWeight + EUS.desireToEat + EUS.desireToRest && EUS.desireToRest > 25)
         {
             activityText.text = "Planning to rest...";
-            AP.SelectGoal(resting, this);
+            AP.SelectGoal(resting, inventory);
             NMA.destination = AP.pathToActions[0];
             idleTimer = sleepTimer;
             followingPlan = true;

@@ -16,27 +16,34 @@ public class ActionPlanner : MonoBehaviour
         availableActions = FindObjectsOfType<Action>();
     }
 
-    public void SelectRandomGoal(EnemyAI EAI)
+    public void SelectRandomGoal(Inventory inventory)
     {
         if (actionsToGoal.Count == 0)
         {
             endGoal = availableActions[Random.Range(0, availableActions.Length)];
-            CalculateOptimalRoute(EAI);
+            CalculateOptimalRoute(inventory);
         }
     }
 
-    public void SelectGoal(Action goal, EnemyAI EAI)
+    public void SelectGoal(Action goal, Inventory inventory)
     {
         endGoal = goal;
-        CalculateOptimalRoute(EAI);
+        CalculateOptimalRoute(inventory);
     }
 
-    void CalculateOptimalRoute(EnemyAI EAI)
+    public void CollectSpecificItem(ItemList item, int amount, Inventory inventory)
     {
-        pathToActions = FindPathToTarget(endGoal, EAI);
+        // TODO implement search option for specific item, get the closest action that gives said item and use as endgoal
+        endGoal = null;
+        CalculateOptimalRoute(inventory);
     }
 
-    public List<Vector3> FindPathToTarget(Action goal, EnemyAI EAI)
+    void CalculateOptimalRoute(Inventory inventory)
+    {
+        pathToActions = FindPathToTarget(endGoal, inventory);
+    }
+
+    public List<Vector3> FindPathToTarget(Action goal, Inventory inventory)
     {
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();
@@ -58,10 +65,10 @@ public class ActionPlanner : MonoBehaviour
             closedSet.Add(currentAction);
 
             // if the action has no requirement or if the enemy has a sufficient amount of the item return a route
-            if (!currentAction.hasRequirement || EAI.inventory.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
+            if (!currentAction.hasRequirement || inventory.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
             {
                 List<Vector3> path = new List<Vector3>();
-                List<Action> actionPath = RetracePath(goal, EAI);
+                List<Action> actionPath = RetracePath(goal, inventory);
                 for (int i = 0; i < actionPath.Count; i++)
                 {
                     path.Add(actionPath[i].transform.position);
@@ -86,7 +93,7 @@ public class ActionPlanner : MonoBehaviour
                 // OPTIONAL: check if resource is depleted 
 
                 int distanceCost = Mathf.RoundToInt(Vector3.Distance(checkable.gameObject.transform.position, currentAction.transform.position));
-                int reqCost = RequirementCost(currentAction, checkable, EAI);
+                int reqCost = RequirementCost(currentAction, checkable, inventory);
                 int costToAction = currentAction.FScore + reqCost;
                 if (costToAction < checkable.FScore || !openSet.Contains(checkable))
                 {
@@ -95,7 +102,7 @@ public class ActionPlanner : MonoBehaviour
                     checkable.quantityStack = currentAction.quantityStack * checkable.requiredAmount;
                     checkable.GScore = distanceCost;
                     checkable.HScore = costToAction;
-                    checkable.quantity = CalculateAmountNeeded(currentAction, checkable, EAI);
+                    checkable.quantity = CalculateAmountNeeded(currentAction, checkable, inventory);
 
                     if (!openSet.Contains(checkable))
                     {
@@ -110,28 +117,28 @@ public class ActionPlanner : MonoBehaviour
     }
 
     // Calculate costs based on actions and quantity
-    public int RequirementCost(Action requirement, Action giver, EnemyAI EAI)
+    public int RequirementCost(Action requirement, Action giver, Inventory inventory)
     {
         int cost = 0;
 
         if (requirement.hasRequirement)
         {
-            cost = CalculateAmountNeeded(requirement, giver, EAI) * giver.actionCost;
+            cost = CalculateAmountNeeded(requirement, giver, inventory) * giver.actionCost;
         }
 
         return cost;
     }
 
     // Calculate how many items are needed
-    public int CalculateAmountNeeded(Action requirement, Action giver, EnemyAI EAI)
+    public int CalculateAmountNeeded(Action requirement, Action giver, Inventory inventory)
     {
         int amount = 0;
-        amount = Mathf.CeilToInt((requirement.requiredAmount * requirement.quantityStack - EAI.inventory.HasAmountOfItem(requirement.requiredItem)) / giver.givenAmount);
+        amount = Mathf.CeilToInt((requirement.requiredAmount * requirement.quantityStack - inventory.HasAmountOfItem(requirement.requiredItem)) / giver.givenAmount);
         return amount;
     }
 
     // Retrace path and make sure that other lists get updated as well
-    List<Action> RetracePath(Action goal, EnemyAI EAI)
+    List<Action> RetracePath(Action goal, Inventory inventory)
     {
         List<Action> path = new List<Action>();
         Action currentAction = goal;
@@ -147,7 +154,7 @@ public class ActionPlanner : MonoBehaviour
 
                 if (prevAction != currentAction)
                 {
-                    for (int i = 0; i < (amount - EAI.inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
+                    for (int i = 0; i < (amount - inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
                     {
                         path.Add(currentAction);
                         actionsToGoal.Add(currentAction);
