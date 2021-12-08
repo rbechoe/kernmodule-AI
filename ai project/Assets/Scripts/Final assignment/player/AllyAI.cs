@@ -12,6 +12,7 @@ public class AllyAI : MonoBehaviour
     public Inventory inventory;
     public GameObject destObj;
     bool followingPlan;
+    bool coverDest;
     float idleTimer;
     float waitTimer = 3;
     float bombCd = 2;
@@ -41,15 +42,19 @@ public class AllyAI : MonoBehaviour
             if (Vector3.Distance(player.transform.position, transform.position) > stalkRange)
             {
                 NMA.destination = player.transform.position;
+                coverDest = false;
             }
             else
             {
                 NMA.destination = transform.position;
+                coverDest = false;
             }
         }
         else
         {
-            if (pathCd <= 0)
+            Vector3 enemyPos = PC.attacker.transform.position;
+            // if not covered and calculating new destination for cover and can see enemy, go hide!
+            if (pathCd <= 0 && !coverDest && !Physics.Linecast(transform.position, enemyPos) && !followingPlan)
             {
                 Collider[] hits = Physics.OverlapSphere(transform.position, 100f);
                 GameObject chosenObject = null;
@@ -60,14 +65,13 @@ public class AllyAI : MonoBehaviour
                     {
                         continue; // skip objects that should not be used for hiding
                     }
-                    float dist = Vector3.Distance(hit.transform.position, PC.attacker.transform.position);
+                    float dist = Vector3.Distance(hit.transform.position, enemyPos);
                     if (dist < closestDistance)
                     {
                         chosenObject = hit.gameObject;
                     }
                 }
                 
-                // TODO cast raycast to see if it can see target, if yes find new destination if already at destination
                 // method used to calculate position behind cover compared to enemy position vs cover position
                 Vector3 newPos = chosenObject.transform.position;
                 float newX = newPos.x;
@@ -75,39 +79,44 @@ public class AllyAI : MonoBehaviour
                 Vector3 diffA = (PC.attacker.transform.position - newPos) / 2f;
                 Vector3 diffB = (newPos - PC.attacker.transform.position) / 2f;
                 // enemy is top right
-                if (PC.attacker.transform.position.x > newX && PC.attacker.transform.position.z > newZ)
+                if (enemyPos.x > newX && enemyPos.z > newZ)
                 {
                     newX -= Mathf.Abs(diffA.x);
                     newZ -= Mathf.Abs(diffA.z);
                 }
                 // enemy is bottom left
-                if (PC.attacker.transform.position.x < newX && PC.attacker.transform.position.z < newZ)
+                if (enemyPos.x < newX && enemyPos.z < newZ)
                 {
                     newX += Mathf.Abs(diffB.x);
                     newZ += Mathf.Abs(diffB.z);
                 }
                 // enemy is bottom right
-                if (PC.attacker.transform.position.x > newX && PC.attacker.transform.position.z < newZ)
+                if (enemyPos.x > newX && enemyPos.z < newZ)
                 {
                     newX -= Mathf.Abs(diffA.x);
                     newZ += Mathf.Abs(diffB.z);
                 }
                 // enemy is top left
-                if (PC.attacker.transform.position.x < newX && PC.attacker.transform.position.z > newZ)
+                if (enemyPos.x < newX && enemyPos.z > newZ)
                 {
                     newX += Mathf.Abs(diffB.x);
                     newZ -= Mathf.Abs(diffA.z);
                 }
                 newPos = new Vector3(newX, chosenObject.transform.position.y, newZ);
                 NMA.destination = newPos;
-
-                // TODO calculate path to see if position is reachable, otherwise pick new cover object
+                coverDest = true;
 
                 pathCd = 5;
             }
             else
             {
                 pathCd -= Time.deltaTime;
+            }
+
+            // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
+            if (coverDest && Physics.Linecast(transform.position, enemyPos) && Vector3.Distance(transform.position, NMA.destination) < 1)
+            {
+                // TODO if ally has no bombs go search for them!
             }
         }
 

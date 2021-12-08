@@ -7,15 +7,10 @@ public class PlayerController : MonoBehaviour
     public float speed = 10;
     public float rotSpeed = 100;
     float attackedCd = 0;
-    float attackedCdReset = 3;
+    float attackedCdReset = 5;
 
     public bool attacked;
     public GameObject attacker;
-
-    void Start()
-    {
-        
-    }
 
     void Update()
     {
