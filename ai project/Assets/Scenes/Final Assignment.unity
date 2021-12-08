@@ -1326,6 +1326,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   destObj: {fileID: 308737143}
+  bombPrefab: {fileID: 0}
+  activityText: {fileID: 1925934140}
   items: 
   amounts: 
   hardlocked: 0

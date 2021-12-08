@@ -31,11 +31,22 @@ public class ActionPlanner : MonoBehaviour
         CalculateOptimalRoute(inventory);
     }
 
-    public void CollectSpecificItem(ItemList item, int amount, Inventory inventory)
+    public void CollectSpecificItem(ItemList item, int amount, Inventory inventory, Vector3 position)
     {
-        // TODO implement search option for specific item, get the closest action that gives said item and use as endgoal
         endGoal = null;
-        CalculateOptimalRoute(inventory);
+        float estimatedCost = float.MaxValue;
+
+        foreach(Action action in availableActions)
+        {
+            if (action.givenItem != item) continue;
+            if (amount * action.actionCost + Vector3.Distance(action.transform.position, position) < estimatedCost)
+            {
+                estimatedCost = amount * action.actionCost + Vector3.Distance(action.transform.position, position);
+                endGoal = action;
+            }
+        }
+
+        pathToActions = FindPathToTarget(endGoal, inventory, amount);
     }
 
     void CalculateOptimalRoute(Inventory inventory)
@@ -43,7 +54,7 @@ public class ActionPlanner : MonoBehaviour
         pathToActions = FindPathToTarget(endGoal, inventory);
     }
 
-    public List<Vector3> FindPathToTarget(Action goal, Inventory inventory)
+    public List<Vector3> FindPathToTarget(Action goal, Inventory inventory, int amount = 1)
     {
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();
@@ -68,7 +79,7 @@ public class ActionPlanner : MonoBehaviour
             if (!currentAction.hasRequirement || inventory.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
             {
                 List<Vector3> path = new List<Vector3>();
-                List<Action> actionPath = RetracePath(goal, inventory);
+                List<Action> actionPath = RetracePath(goal, inventory, amount);
                 for (int i = 0; i < actionPath.Count; i++)
                 {
                     path.Add(actionPath[i].transform.position);
@@ -138,7 +149,7 @@ public class ActionPlanner : MonoBehaviour
     }
 
     // Retrace path and make sure that other lists get updated as well
-    List<Action> RetracePath(Action goal, Inventory inventory)
+    List<Action> RetracePath(Action goal, Inventory inventory, int _amount)
     {
         List<Action> path = new List<Action>();
         Action currentAction = goal;
@@ -150,7 +161,7 @@ public class ActionPlanner : MonoBehaviour
         {
             if (!path.Contains(currentAction))
             {
-                int amount = (currentAction.child != null) ? currentAction.child.quantityStack : 1;
+                int amount = (currentAction.child != null) ? currentAction.child.quantityStack : _amount;
 
                 if (prevAction != currentAction)
                 {

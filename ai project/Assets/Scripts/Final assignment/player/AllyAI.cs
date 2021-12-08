@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -12,7 +13,8 @@ public class AllyAI : MonoBehaviour
     public Inventory inventory;
     public GameObject destObj;
     public GameObject bombPrefab;
-    bool followingPlan;
+    public TextMeshPro activityText;
+    public bool followingPlan;
     bool coverDest;
     float idleTimer;
     float waitTimer = 3;
@@ -38,6 +40,45 @@ public class AllyAI : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (followingPlan)
+        {
+            if (NMA.destination != AP.pathToActions[0]) NMA.destination = AP.pathToActions[0];
+
+            if (Vector3.Distance(transform.position, AP.pathToActions[0]) < 1.5f)
+            {
+                if (waitTimer > 0)
+                {
+                    waitTimer -= Time.deltaTime;
+                    activityText.text = "Doing " + AP.actionsToGoal[0].actionName;
+                    return;
+                }
+
+                waitTimer = AP.waitTimePerAction[0];
+
+                // update inventory
+                if (AP.actionsToGoal.Count > 0)
+                {
+                    AP.actionsToGoal[0].PerformAction(inventory);
+                }
+
+                AP.waitTimePerAction.RemoveAt(0);
+                AP.pathToActions.RemoveAt(0);
+                AP.actionsToGoal.RemoveAt(0);
+
+                if (AP.pathToActions.Count > 0)
+                {
+                    NMA.destination = AP.pathToActions[0];
+                    activityText.text = "Moving to do " + AP.actionsToGoal[0].actionName;
+                }
+                else
+                {
+                    followingPlan = false;
+                }
+            }
+
+            return;
+        }
+
         if (!PC.attacked)
         {
             if (Vector3.Distance(player.transform.position, transform.position) > stalkRange)
@@ -120,9 +161,11 @@ public class AllyAI : MonoBehaviour
             {
                 if (!inventory.HasItem(ItemList.Smoke_Bomb))
                 {
-                    // TODO give goal to find 3 bombs
-                    AP.CollectSpecificItem(ItemList.Smoke_Bomb, 3, inventory);
+                    AP.CollectSpecificItem(ItemList.Smoke_Bomb, 3, inventory, transform.position);
+                    NMA.destination = AP.pathToActions[0];
+                    waitTimer = AP.waitTimePerAction[0];
                     followingPlan = true;
+                    Debug.Log("Searching bombs!");
                 }
                 else
                 {
