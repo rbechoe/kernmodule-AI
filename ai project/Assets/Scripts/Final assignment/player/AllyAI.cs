@@ -10,12 +10,13 @@ public class AllyAI : MonoBehaviour
     ActionPlanner AP;
     GameObject player;
     PlayerController PC;
+    TrajectoryCalculator TC;
     public Inventory inventory;
     public GameObject destObj;
-    public GameObject bombPrefab;
     public TextMeshPro activityText;
-    public bool followingPlan;
-    bool coverDest;
+    bool followingPlan;
+    bool inCover;
+    bool isHidden;
     float idleTimer;
     float waitTimer = 3;
     float bombCd = 5;
@@ -26,8 +27,6 @@ public class AllyAI : MonoBehaviour
     public ItemList[] items;
     public int[] amounts;
 
-    public bool hardlocked;
-
     void Start()
     {
         inventory = new Inventory();
@@ -35,11 +34,15 @@ public class AllyAI : MonoBehaviour
         AP = gameObject.GetComponent<ActionPlanner>();
         player = GameObject.FindGameObjectWithTag("Player");
         PC = player.GetComponent<PlayerController>();
+        TC = gameObject.GetComponent<TrajectoryCalculator>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        items = inventory.GetKeys();
+        amounts = inventory.GetValues();
+
         if (followingPlan)
         {
             if (NMA.destination != AP.pathToActions[0]) NMA.destination = AP.pathToActions[0];
@@ -84,20 +87,22 @@ public class AllyAI : MonoBehaviour
             if (Vector3.Distance(player.transform.position, transform.position) > stalkRange)
             {
                 NMA.destination = player.transform.position;
-                coverDest = false;
+                inCover = false;
             }
             else
             {
                 NMA.destination = transform.position;
-                coverDest = false;
+                inCover = false;
             }
         }
         else
         {
             Vector3 enemyPos = PC.attacker.transform.position;
+            isHidden = Physics.Linecast(transform.position, enemyPos);
             // if not covered and calculating new destination for cover and can see enemy, go hide!
-            if (pathCd <= 0 && !coverDest && !Physics.Linecast(transform.position, enemyPos) && !followingPlan)
+            if (pathCd <= 0 && !inCover)
             {
+                Debug.Log("Searching cover!");
                 Collider[] hits = Physics.OverlapSphere(transform.position, 100f);
                 GameObject chosenObject = null;
                 float closestDistance = float.MaxValue;
@@ -147,7 +152,7 @@ public class AllyAI : MonoBehaviour
                 }
                 newPos = new Vector3(newX, chosenObject.transform.position.y, newZ);
                 NMA.destination = newPos;
-                coverDest = true;
+                inCover = true;
 
                 pathCd = 5;
             }
@@ -157,10 +162,13 @@ public class AllyAI : MonoBehaviour
             }
 
             // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
-            if (coverDest && Physics.Linecast(transform.position, enemyPos) && Vector3.Distance(transform.position, NMA.destination) < 1)
+            if (inCover && isHidden && Vector3.Distance(transform.position, NMA.destination) < 2)
             {
-                if (!inventory.HasItem(ItemList.Smoke_Bomb))
+                // TODO somehow always hidden???
+                Debug.Log("Hidden");
+                if (!inventory.HasRequirement(ItemList.Smoke_Bomb, 1))
                 {
+                    // TODO make action for collecting bombs
                     AP.CollectSpecificItem(ItemList.Smoke_Bomb, 3, inventory, transform.position);
                     NMA.destination = AP.pathToActions[0];
                     waitTimer = AP.waitTimePerAction[0];
@@ -171,8 +179,9 @@ public class AllyAI : MonoBehaviour
                 {
                     if (idleTimer < 0)
                     {
-                        // TODO throw bomb to enemy
-                        // TODO https://www.youtube.com/watch?v=03GHtGyEHas
+                        // throw bomb to enemy
+                        TC.LaunchProjectile(PC.attacker);
+                        inventory.RemoveFromInventory(ItemList.Smoke_Bomb, 1);
                         idleTimer = bombCd;
                         Debug.Log("Throwing bomb!");
                     }

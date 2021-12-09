@@ -157,42 +157,45 @@ public class ActionPlanner : MonoBehaviour
         actionsToGoal = new List<Action>();
         waitTimePerAction = new List<float>();
 
-        while (currentAction != null)
+        for (int j = 0; j < _amount; j++)
         {
-            if (!path.Contains(currentAction))
+            while (currentAction != null)
             {
-                int amount = (currentAction.child != null) ? currentAction.child.quantityStack : _amount;
-
-                if (prevAction != currentAction)
+                if (!path.Contains(currentAction))
                 {
-                    for (int i = 0; i < (amount - inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
+                    int amount = (currentAction.child != null) ? currentAction.child.quantityStack : 0;
+
+                    if (prevAction != currentAction)
+                    {
+                        for (int i = 0; i < (amount - inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
+                        {
+                            path.Add(currentAction);
+                            actionsToGoal.Add(currentAction);
+                            waitTimePerAction.Add(currentAction.actionCost);
+                        }
+                    }
+                    else
                     {
                         path.Add(currentAction);
                         actionsToGoal.Add(currentAction);
                         waitTimePerAction.Add(currentAction.actionCost);
                     }
-                }
-                else
-                {
-                    path.Add(currentAction);
-                    actionsToGoal.Add(currentAction);
-                    waitTimePerAction.Add(currentAction.actionCost);
-                }
 
-                if (currentAction.parent != null)
-                {
-                    prevAction = currentAction;
-                    currentAction = currentAction.parent;
+                    if (currentAction.parent != null)
+                    {
+                        prevAction = currentAction;
+                        currentAction = currentAction.parent;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 else
                 {
+                    Debug.Log("Failed to calculate whole path, triggered infinite loop");
                     break;
                 }
-            }
-            else
-            {
-                Debug.Log("Failed to calculate whole path, triggered infinite loop");
-                break;
             }
         }
 
