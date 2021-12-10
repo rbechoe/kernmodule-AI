@@ -4,7 +4,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class EnemyAI : MonoBehaviour
+public class EnemyAI : MonoBehaviour, IDamagable
 {
     NavMeshAgent NMA;
     ActionPlanner AP;
@@ -21,6 +21,8 @@ public class EnemyAI : MonoBehaviour
     float idleTimer;
     float attackCd;
     float waitTimer = 3;
+    float dazeTimer;
+    float dazeReset = 5;
     public bool attackPlayer;
 
     [Header("Predefined Actions")]
@@ -73,6 +75,12 @@ public class EnemyAI : MonoBehaviour
 
     void Update()
     {
+        if (dazeTimer > 0)
+        {
+            dazeTimer -= Time.deltaTime;
+            return;
+        }
+
         UpdateEnemyStats();
 
         if (idleTimer > 0 && !followingPlan)
@@ -196,7 +204,8 @@ public class EnemyAI : MonoBehaviour
                     NMA.destination = transform.position;
                     activityText.text = "Attack!!";
                     attackCd = attackCdReset;
-                    PC.TakeDamage(gameObject);
+                    // TODO do more damage if weapon equiped
+                    PC.TakeDamage(5, DamageType.RawDamage, gameObject);
                     Debug.Log("Attacked player!");
                 }
             }
@@ -261,6 +270,20 @@ public class EnemyAI : MonoBehaviour
         {
             Debug.Log("Invalid destionation, calculating new one...");
             GenerateDestination();
+        }
+    }
+    
+    public void TakeDamage(int amount, DamageType damageType, GameObject attacker)
+    {
+        switch (damageType)
+        {
+            case DamageType.RawDamage:
+                EUS.health -= amount;
+                break;
+
+            case DamageType.Daze:
+                dazeTimer = dazeReset;
+                break;
         }
     }
 }

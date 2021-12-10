@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IDamagable
 {
     public float speed = 10;
     public float rotSpeed = 100;
@@ -29,7 +29,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void TakeDamage(GameObject attacker)
+    public void TakeDamage(int amount, DamageType damageType, GameObject attacker)
     {
         this.attacker = attacker;
         attacked = true;

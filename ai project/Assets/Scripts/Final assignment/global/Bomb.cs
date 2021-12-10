@@ -6,6 +6,7 @@ public class Bomb : MonoBehaviour
 {
     public GameObject explosionEffect;
     float aliveTimer = 10;
+
     void Update()
     {
         aliveTimer -= Time.deltaTime;
@@ -19,6 +20,7 @@ public class Bomb : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         Instantiate(explosionEffect, transform.position, Quaternion.identity);
+        collision.gameObject.GetComponent<IDamagable>()?.TakeDamage(1, DamageType.Daze, gameObject);
         Destroy(gameObject);
     }
 }

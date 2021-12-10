@@ -27,7 +27,6 @@ public class ActionPlanner : MonoBehaviour
 
     public void SelectGoal(Action goal, Inventory inventory)
     {
-        Debug.Log(goal);
         endGoal = goal;
         pathToActions = FindPathToTarget(endGoal, inventory);
     }

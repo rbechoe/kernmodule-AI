@@ -160,12 +160,13 @@ public class AllyAI : MonoBehaviour
                 pathCd -= Time.deltaTime;
             }
 
-            isHidden = Physics.Linecast(transform.position, enemyPos);
+            RaycastHit lineHit;
+            isHidden = Physics.Linecast(transform.position, enemyPos, out lineHit);
+            //Debug.Log(lineHit.collider.name);
+
             // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
             if (inCover && isHidden && Vector3.Distance(transform.position, NMA.destination) < 2)
             {
-                // TODO somehow always hidden???
-                Debug.Log("Hidden");
                 if (!inventory.HasRequirement(ItemList.Smoke_Bomb, 1))
                 {
                     // Make action for collecting bombs
@@ -194,7 +195,6 @@ public class AllyAI : MonoBehaviour
                         TC.LaunchProjectile(PC.attacker);
                         inventory.RemoveFromInventory(ItemList.Smoke_Bomb, 1);
                         idleTimer = bombCd;
-                        Debug.Log("Throwing bomb!");
                     }
                     else
                     {
