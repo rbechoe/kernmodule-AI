@@ -21,40 +21,18 @@ public class ActionPlanner : MonoBehaviour
         if (actionsToGoal.Count == 0)
         {
             endGoal = availableActions[Random.Range(0, availableActions.Length)];
-            CalculateOptimalRoute(inventory);
+            pathToActions = FindPathToTarget(endGoal, inventory);
         }
     }
 
     public void SelectGoal(Action goal, Inventory inventory)
     {
+        Debug.Log(goal);
         endGoal = goal;
-        CalculateOptimalRoute(inventory);
-    }
-
-    public void CollectSpecificItem(ItemList item, int amount, Inventory inventory, Vector3 position)
-    {
-        endGoal = null;
-        float estimatedCost = float.MaxValue;
-
-        foreach(Action action in availableActions)
-        {
-            if (action.givenItem != item) continue;
-            if (amount * action.actionCost + Vector3.Distance(action.transform.position, position) < estimatedCost)
-            {
-                estimatedCost = amount * action.actionCost + Vector3.Distance(action.transform.position, position);
-                endGoal = action;
-            }
-        }
-
-        pathToActions = FindPathToTarget(endGoal, inventory, amount);
-    }
-
-    void CalculateOptimalRoute(Inventory inventory)
-    {
         pathToActions = FindPathToTarget(endGoal, inventory);
     }
 
-    public List<Vector3> FindPathToTarget(Action goal, Inventory inventory, int amount = 1)
+    public List<Vector3> FindPathToTarget(Action goal, Inventory inventory)
     {
         List<Action> openSet = new List<Action>();
         HashSet<Action> closedSet = new HashSet<Action>();
@@ -79,7 +57,7 @@ public class ActionPlanner : MonoBehaviour
             if (!currentAction.hasRequirement || inventory.HasRequirement(currentAction.requiredItem, currentAction.requiredAmount))
             {
                 List<Vector3> path = new List<Vector3>();
-                List<Action> actionPath = RetracePath(goal, inventory, amount);
+                List<Action> actionPath = RetracePath(goal, inventory);
                 for (int i = 0; i < actionPath.Count; i++)
                 {
                     path.Add(actionPath[i].transform.position);
@@ -98,8 +76,6 @@ public class ActionPlanner : MonoBehaviour
                 // TODO: once full path is calculated try path that had branch to see if it is more efficient
                 // store each path in a dictionary which also has the total action cost and then pick the lowest costing one
                 // after reaching the first path give a hard cap to calculation time in order to prevent AI from thinking for too long
-
-                // TODO: add each action individually to the list of actions instead of making a large timer
 
                 // OPTIONAL: check if resource is depleted 
 
@@ -149,7 +125,7 @@ public class ActionPlanner : MonoBehaviour
     }
 
     // Retrace path and make sure that other lists get updated as well
-    List<Action> RetracePath(Action goal, Inventory inventory, int _amount)
+    List<Action> RetracePath(Action goal, Inventory inventory)
     {
         List<Action> path = new List<Action>();
         Action currentAction = goal;
@@ -157,45 +133,42 @@ public class ActionPlanner : MonoBehaviour
         actionsToGoal = new List<Action>();
         waitTimePerAction = new List<float>();
 
-        for (int j = 0; j < _amount; j++)
+        while (currentAction != null)
         {
-            while (currentAction != null)
+            if (!path.Contains(currentAction))
             {
-                if (!path.Contains(currentAction))
-                {
-                    int amount = (currentAction.child != null) ? currentAction.child.quantityStack : 0;
+                int amount = (currentAction.child != null) ? currentAction.child.quantityStack : 0;
 
-                    if (prevAction != currentAction)
-                    {
-                        for (int i = 0; i < (amount - inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
-                        {
-                            path.Add(currentAction);
-                            actionsToGoal.Add(currentAction);
-                            waitTimePerAction.Add(currentAction.actionCost);
-                        }
-                    }
-                    else
+                if (prevAction != currentAction)
+                {
+                    for (int i = 0; i < (amount - inventory.HasAmountOfItem(currentAction.givenItem)) / currentAction.givenAmount; i++)
                     {
                         path.Add(currentAction);
                         actionsToGoal.Add(currentAction);
                         waitTimePerAction.Add(currentAction.actionCost);
                     }
-
-                    if (currentAction.parent != null)
-                    {
-                        prevAction = currentAction;
-                        currentAction = currentAction.parent;
-                    }
-                    else
-                    {
-                        break;
-                    }
                 }
                 else
                 {
-                    Debug.Log("Failed to calculate whole path, triggered infinite loop");
+                    path.Add(currentAction);
+                    actionsToGoal.Add(currentAction);
+                    waitTimePerAction.Add(currentAction.actionCost);
+                }
+
+                if (currentAction.parent != null)
+                {
+                    prevAction = currentAction;
+                    currentAction = currentAction.parent;
+                }
+                else
+                {
                     break;
                 }
+            }
+            else
+            {
+                Debug.Log("Failed to calculate whole path, triggered infinite loop");
+                break;
             }
         }
 

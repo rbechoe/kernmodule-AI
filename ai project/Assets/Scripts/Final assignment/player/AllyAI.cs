@@ -59,7 +59,7 @@ public class AllyAI : MonoBehaviour
                 waitTimer = AP.waitTimePerAction[0];
 
                 // update inventory
-                if (AP.actionsToGoal.Count > 0)
+                if (AP.actionsToGoal.Count > 0 && AP.actionsToGoal[0] != null)
                 {
                     AP.actionsToGoal[0].PerformAction(inventory);
                 }
@@ -98,7 +98,6 @@ public class AllyAI : MonoBehaviour
         else
         {
             Vector3 enemyPos = PC.attacker.transform.position;
-            isHidden = Physics.Linecast(transform.position, enemyPos);
             // if not covered and calculating new destination for cover and can see enemy, go hide!
             if (pathCd <= 0 && !inCover)
             {
@@ -161,6 +160,7 @@ public class AllyAI : MonoBehaviour
                 pathCd -= Time.deltaTime;
             }
 
+            isHidden = Physics.Linecast(transform.position, enemyPos);
             // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
             if (inCover && isHidden && Vector3.Distance(transform.position, NMA.destination) < 2)
             {
@@ -168,12 +168,23 @@ public class AllyAI : MonoBehaviour
                 Debug.Log("Hidden");
                 if (!inventory.HasRequirement(ItemList.Smoke_Bomb, 1))
                 {
-                    // TODO make action for collecting bombs
-                    AP.CollectSpecificItem(ItemList.Smoke_Bomb, 3, inventory, transform.position);
+                    // Make action for collecting bombs
+                    GameObject actionObj = new GameObject();
+                    actionObj.AddComponent<Action>();
+                    actionObj.transform.position = transform.position;
+                    Action collectBomb = actionObj.GetComponent<Action>();
+                    collectBomb.hasRequirement = true;
+                    collectBomb.requiredAmount = 3;
+                    collectBomb.requiredItem = ItemList.Smoke_Bomb;
+                    collectBomb.givenItem = ItemList.Empty;
+                    collectBomb.givenAmount = 0;
+
+                    AP.SelectGoal(collectBomb, inventory);
                     NMA.destination = AP.pathToActions[0];
                     waitTimer = AP.waitTimePerAction[0];
                     followingPlan = true;
-                    Debug.Log("Searching bombs!");
+
+                    Destroy(actionObj);
                 }
                 else
                 {
