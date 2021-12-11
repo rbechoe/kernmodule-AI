@@ -11881,6 +11881,7 @@ GameObject:
   - component: {fileID: 997459189}
   - component: {fileID: 997459188}
   - component: {fileID: 997459187}
+  - component: {fileID: 997459190}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -11953,6 +11954,66 @@ Transform:
   m_Father: {fileID: 483584462}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &997459190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 997459186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 948f4100a11a5c24981795d21301da5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  volumeTrigger: {fileID: 997459189}
+  volumeLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  stopNaNPropagation: 1
+  finalBlitToCameraTarget: 0
+  antialiasingMode: 0
+  temporalAntialiasing:
+    jitterSpread: 0.75
+    sharpness: 0.25
+    stationaryBlending: 0.95
+    motionBlending: 0.85
+  subpixelMorphologicalAntialiasing:
+    quality: 2
+  fastApproximateAntialiasing:
+    fastMode: 0
+    keepAlpha: 0
+  fog:
+    enabled: 1
+    excludeSkybox: 1
+  debugLayer:
+    lightMeter:
+      width: 512
+      height: 256
+      showCurves: 1
+    histogram:
+      width: 512
+      height: 256
+      channel: 3
+    waveform:
+      exposure: 0.12
+      height: 256
+    vectorscope:
+      size: 256
+      exposure: 0.12
+    overlaySettings:
+      linearDepth: 0
+      motionColorIntensity: 4
+      motionGridSize: 64
+      colorBlindnessType: 0
+      colorBlindnessStrength: 1
+  m_Resources: {fileID: 11400000, guid: d82512f9c8e5d4a4d938b575d47f88d4, type: 2}
+  m_ShowToolkit: 0
+  m_ShowCustomSorter: 0
+  breakBeforeColorGrading: 0
+  m_BeforeTransparentBundles: []
+  m_BeforeStackBundles: []
+  m_AfterStackBundles: []
 --- !u!1 &1003837589
 GameObject:
   m_ObjectHideFlags: 0
@@ -12278,7 +12339,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1026028922}
   m_LocalRotation: {x: -0.99913406, y: -0, z: -0, w: 0.041606743}
-  m_LocalPosition: {x: 53.6, y: 21.08, z: 53.54}
+  m_LocalPosition: {x: 53.6, y: 21.45, z: 53.54}
   m_LocalScale: {x: 2.8947, y: 2.8947, z: 2.8947}
   m_Children: []
   m_Father: {fileID: 3006808717394985577}
@@ -14248,13 +14309,12 @@ GameObject:
   - component: {fileID: 1283490820}
   - component: {fileID: 1283490823}
   - component: {fileID: 1283490822}
-  - component: {fileID: 1283490821}
   m_Layer: 0
   m_Name: rpgpp_lt_rock_02 (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &1283490820
 Transform:
@@ -14270,19 +14330,6 @@ Transform:
   m_Father: {fileID: 3006808717394985577}
   m_RootOrder: 42
   m_LocalEulerAnglesHint: {x: -175.231, y: 37.224, z: 0}
---- !u!65 &1283490821
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1283490819}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.3635278, y: 2.2089167, z: 1.9489051}
-  m_Center: {x: 0.1051386, y: 0.25091583, z: 0.117384255}
 --- !u!23 &1283490822
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -14783,6 +14830,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1342648789}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &1395627257
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1395627259}
+  - component: {fileID: 1395627258}
+  m_Layer: 6
+  m_Name: PP
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1395627258
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395627257}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b9a305e18de0c04dbd257a21cd47087, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sharedProfile: {fileID: 11400000, guid: d768f2319251d2f43be7ff5adb74c8fd, type: 2}
+  isGlobal: 1
+  blendDistance: 0
+  weight: 1
+  priority: 0
+--- !u!4 &1395627259
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1395627257}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.449311, y: 17.672567, z: -26.484348}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1397931149
 GameObject:
   m_ObjectHideFlags: 0
@@ -25231,27 +25326,13 @@ GameObject:
   - component: {fileID: 3002289506346964531}
   - component: {fileID: 3012663125780337529}
   - component: {fileID: 3019986630195105301}
-  - component: {fileID: 3007366472248121596}
   m_Layer: 0
   m_Name: rpgpp_lt_sack_open_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &3007366472248121596
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3007366472248121595}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.8051333, y: 1.0944562, z: 0.7670232}
-  m_Center: {x: -0.028356642, y: 0.5433762, z: -0.03305179}
 --- !u!1 &3007366472503053053
 GameObject:
   m_ObjectHideFlags: 0
@@ -25525,27 +25606,13 @@ GameObject:
   - component: {fileID: 3002348742460315565}
   - component: {fileID: 3012837586391533459}
   - component: {fileID: 3021718342303051651}
-  - component: {fileID: 3007371472085083720}
   m_Layer: 0
   m_Name: rpgpp_lt_rock_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &3007371472085083720
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3007371472085083719}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.6173592, y: 2.0129068, z: 2.1517613}
-  m_Center: {x: 0.14191061, y: 0.12104689, z: 0.038137194}
 --- !u!1 &3007413193458232374
 GameObject:
   m_ObjectHideFlags: 0
@@ -26143,27 +26210,13 @@ GameObject:
   - component: {fileID: 3002247739312794119}
   - component: {fileID: 3012118459541288867}
   - component: {fileID: 3021580315403548715}
-  - component: {fileID: 3007521597154132372}
   m_Layer: 0
   m_Name: rpgpp_lt_barrel_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &3007521597154132372
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3007521597154132371}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.85185945, y: 1.1579026, z: 0.86052775}
-  m_Center: {x: 0.0063108653, y: 0.5719541, z: 0.00025109947}
 --- !u!1 &3007522603197347544
 GameObject:
   m_ObjectHideFlags: 0
@@ -26843,28 +26896,13 @@ GameObject:
   - component: {fileID: 3005395719877980612}
   - component: {fileID: 3012068811456347820}
   - component: {fileID: 3020765625636631892}
-  - component: {fileID: 3007993029116989271}
   m_Layer: 0
   m_Name: rpgpp_lt_tree_pine_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &3007993029116989271
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3007993029116989270}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 58c79ebc04f48c74fa4869c3f7d941fd, type: 3}
 --- !u!1 &3007993029248979475
 GameObject:
   m_ObjectHideFlags: 0
@@ -28381,28 +28419,13 @@ GameObject:
   - component: {fileID: 3002246366611420734}
   - component: {fileID: 3011883964018993920}
   - component: {fileID: 3020702121551303562}
-  - component: {fileID: 3008385601035492223}
   m_Layer: 0
   m_Name: rpgpp_lt_tree_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 8
+  m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!64 &3008385601035492223
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3008385601035492222}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300000, guid: 15977c94193725642b83e5c7be73b2e8, type: 3}
 --- !u!1 &3008385601075359307
 GameObject:
   m_ObjectHideFlags: 0
