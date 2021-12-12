@@ -247,6 +247,18 @@ public class EnemyAI : MonoBehaviour, IDamagable
             return;
         }
 
+        float randomChoice = Random.Range(0, 100);
+        if (randomChoice < 5)
+        {
+            activityText.text = "Time for diversity...";
+            AP.SelectRandomGoal(inventory);
+            NMA.destination = AP.pathToActions[0];
+            idleTimer = sleepTimer;
+            followingPlan = true;
+            restOnDone = true;
+            return;
+        }
+
         UpdateWaypoints();
         NMA.destination = waypoints[0].transform.position;
         activityText.text = "Going to " + waypoints[0].name;
