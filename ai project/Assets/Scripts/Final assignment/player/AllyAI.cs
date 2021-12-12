@@ -42,6 +42,7 @@ public class AllyAI : MonoBehaviour
     {
         items = inventory.GetKeys();
         amounts = inventory.GetValues();
+        destObj.transform.position = NMA.destination;
 
         if (followingPlan)
         {
@@ -75,6 +76,7 @@ public class AllyAI : MonoBehaviour
                 }
                 else
                 {
+                    activityText.text = "Ally";
                     followingPlan = false;
                 }
             }
@@ -86,11 +88,13 @@ public class AllyAI : MonoBehaviour
         {
             if (Vector3.Distance(player.transform.position, transform.position) > stalkRange)
             {
+                activityText.text = ":(";
                 NMA.destination = player.transform.position;
                 inCover = false;
             }
             else
             {
+                activityText.text = ":)";
                 NMA.destination = transform.position;
                 inCover = false;
             }
@@ -101,7 +105,7 @@ public class AllyAI : MonoBehaviour
             // if not covered and calculating new destination for cover and can see enemy, go hide!
             if (pathCd <= 0 && !inCover)
             {
-                Debug.Log("Searching cover!");
+                activityText.text = "Searching cover!";
                 Collider[] hits = Physics.OverlapSphere(transform.position, 100f);
                 GameObject chosenObject = null;
                 float closestDistance = float.MaxValue;
@@ -115,8 +119,10 @@ public class AllyAI : MonoBehaviour
                     if (dist < closestDistance)
                     {
                         chosenObject = hit.gameObject;
+                        closestDistance = dist;
                     }
                 }
+                Debug.Log(chosenObject.name);
 
                 // method used to calculate position behind cover compared to enemy position vs cover position
                 // reference: https://gyazo.com/ce97aeb37c1efc8a0b46dc98043c9778
@@ -161,14 +167,15 @@ public class AllyAI : MonoBehaviour
             }
 
             RaycastHit lineHit;
-            isHidden = Physics.Linecast(transform.position, enemyPos, out lineHit);
+            Physics.Linecast(transform.position, enemyPos, out lineHit);
             //Debug.Log(lineHit.collider.name);
 
             // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
-            if (inCover && isHidden && Vector3.Distance(transform.position, NMA.destination) < 2)
+            if (inCover && !lineHit.collider.CompareTag("Enemy") && Vector3.Distance(transform.position, NMA.destination) < 2)
             {
                 if (!inventory.HasRequirement(ItemList.Smoke_Bomb, 1))
                 {
+                    activityText.text = "Looking for smoke bombs...";
                     // Make action for collecting bombs
                     GameObject actionObj = new GameObject();
                     actionObj.AddComponent<Action>();
@@ -192,6 +199,7 @@ public class AllyAI : MonoBehaviour
                     if (idleTimer < 0)
                     {
                         // throw bomb to enemy
+                        activityText.text = "Throwing smoke bomb!";
                         TC.LaunchProjectile(PC.attacker);
                         inventory.RemoveFromInventory(ItemList.Smoke_Bomb, 1);
                         idleTimer = bombCd;
@@ -203,7 +211,5 @@ public class AllyAI : MonoBehaviour
                 }
             }
         }
-
-        destObj.transform.position = NMA.destination;
     }
 }

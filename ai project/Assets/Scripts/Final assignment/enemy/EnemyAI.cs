@@ -78,6 +78,7 @@ public class EnemyAI : MonoBehaviour, IDamagable
         if (dazeTimer > 0)
         {
             dazeTimer -= Time.deltaTime;
+            activityText.text = "?!?!?";
             return;
         }
 
