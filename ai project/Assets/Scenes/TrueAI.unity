@@ -1420,10 +1420,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8a17b283f0597469fb9c5dedb309f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Collect Axe
+  actionName: Smith Axe
   givenItem: 1
   givenAmount: 1
-  actionCost: 3
+  actionCost: 5
   hasRequirement: 1
   requiredItem: 8
   requiredAmount: 2
@@ -21572,7 +21572,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b8a17b283f0597469fb9c5dedb309f2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  actionName: Smithing
+  actionName: Smith Sword
   givenItem: 9
   givenAmount: 1
   actionCost: 5
