@@ -663,7 +663,7 @@ MonoBehaviour:
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
   movementSpeed: 5
-  followTarget: 1
+  followTarget: 0
   enableMusic: 1
   NeighbourDistMult: 10
   speedMult: 40
