@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class TrajectoryCalculator : MonoBehaviour
 {
+    // DISCLAIMER
+    // This was based on a tutorial, I already had made similar systems in the past, but didn't have the time to come up with something
+    // so I used a tutorial for this in order to get it done quick
+    // all credits to Romi Fauzi for the logic
+    // https://www.youtube.com/watch?v=03GHtGyEHas
+
     public Rigidbody bombPrefab;
     public GameObject spawnPoint;
 

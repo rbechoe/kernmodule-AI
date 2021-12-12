@@ -10,11 +10,10 @@ public class EnemyAI : MonoBehaviour, IDamagable
     ActionPlanner AP;
     GameObject player;
     EnemyUtilitySystem EUS;
+    PlayerController PC;
     List<GameObject> waypoints = new List<GameObject>();
     Material healthMat;
-    PlayerController PC;
     Inventory inventory;
-    float distanceFromDest;
     bool followingPlan;
     bool healOnDone;
     bool restOnDone;
@@ -22,7 +21,8 @@ public class EnemyAI : MonoBehaviour, IDamagable
     float attackCd;
     float waitTimer = 3;
     float dazeTimer;
-    float dazeReset = 5;
+    float distanceFromDest;
+    [HideInInspector]
     public bool attackPlayer;
 
     [Header("Predefined Actions")]
@@ -33,13 +33,13 @@ public class EnemyAI : MonoBehaviour, IDamagable
     public float sleepTimer = 20;
     public float restFromHeal = 20;
     public float attackCdReset = 2;
+    public float dazeReset = 5;
     public float waitReset = 3;
 
     [Header("Agent Settings")]
     public GameObject healthBar;
     public GameObject waypointParent;
     public TextMeshPro activityText;
-    public float mapSize = 50;
 
     // used for debugging purposes in the editor
     [Header("Agent Inventory")]
@@ -224,7 +224,7 @@ public class EnemyAI : MonoBehaviour, IDamagable
         NMA.speed = 3.5f;
 
         // set action based on desires
-        UtilityStatus choice = EUS.GetStatus();
+        UtilityStatus choice = EUS.GetNewStatus();
         if (choice == UtilityStatus.Eating)
         {
             activityText.text = "Planning to heal...";

@@ -18,7 +18,6 @@ public class AllyAI : MonoBehaviour
 
     bool followingPlan;
     bool inCover;
-    bool isHidden;
 
     float idleTimer;
     float waitTimer = 3;

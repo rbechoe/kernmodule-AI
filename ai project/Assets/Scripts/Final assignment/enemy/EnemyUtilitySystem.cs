@@ -59,7 +59,7 @@ public class EnemyUtilitySystem
     }
 
     // returns value from 0-2 which indicates what the enemy should do
-    public UtilityStatus GetStatus()
+    public UtilityStatus GetNewStatus()
     {
         UtilityStatus result = UtilityStatus.Continue;
 
