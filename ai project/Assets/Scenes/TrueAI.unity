@@ -9553,11 +9553,11 @@ MonoBehaviour:
   sleepTimer: 20
   restFromHeal: 20
   attackCdReset: 2
+  dazeReset: 5
   waitReset: 3
   healthBar: {fileID: 1100172399}
   waypointParent: {fileID: 2001888175}
   activityText: {fileID: 1135315155}
-  mapSize: 50
   items: 
   amounts: 
   hp: 0
@@ -21576,7 +21576,7 @@ MonoBehaviour:
   givenItem: 9
   givenAmount: 1
   actionCost: 5
-  hasRequirement: 0
+  hasRequirement: 1
   requiredItem: 8
   requiredAmount: 2
   actionSound: {fileID: 0}
