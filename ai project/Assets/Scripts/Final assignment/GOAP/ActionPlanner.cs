@@ -31,6 +31,15 @@ public class ActionPlanner : MonoBehaviour
         pathToActions = FindPathToTarget(endGoal, inventory);
     }
 
+    public void CompleteStep(Inventory inventory)
+    {
+        if (actionsToGoal.Count > 0) actionsToGoal[0].PerformAction(inventory);
+
+        waitTimePerAction.RemoveAt(0);
+        pathToActions.RemoveAt(0);
+        actionsToGoal.RemoveAt(0);
+    }
+
     public List<Vector3> FindPathToTarget(Action goal, Inventory inventory)
     {
         List<Action> openSet = new List<Action>();

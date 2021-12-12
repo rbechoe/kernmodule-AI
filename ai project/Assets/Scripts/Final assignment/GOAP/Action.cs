@@ -4,6 +4,8 @@ using System.Collections.Generic;
 
 public class Action : MonoBehaviour
 {
+    AudioSource AS;
+
     public string actionName;
     public ItemList givenItem;
     public int givenAmount = 1;
@@ -11,6 +13,7 @@ public class Action : MonoBehaviour
     public bool hasRequirement;
     public ItemList requiredItem;
     public int requiredAmount;
+    public AudioClip actionSound;
 
     // used for A-STAR
     public int FScore
@@ -33,6 +36,7 @@ public class Action : MonoBehaviour
     void Awake()
     {
         name = actionName;
+        AS = gameObject.GetComponent<AudioSource>();
     }
     
     public void PerformAction(Inventory inventory)
@@ -43,6 +47,8 @@ public class Action : MonoBehaviour
             {
                 inventory.AddToInventory(givenItem, givenAmount);
             }
+
+            if (actionSound != null) AS.PlayOneShot(actionSound);
 
             return;
         }
@@ -58,6 +64,8 @@ public class Action : MonoBehaviour
             {
                 inventory.RemoveFromInventory(requiredItem, requiredAmount);
             }
+
+            if (actionSound != null) AS.PlayOneShot(actionSound);
 
             return;
         }

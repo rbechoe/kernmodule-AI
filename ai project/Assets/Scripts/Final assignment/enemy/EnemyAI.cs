@@ -13,7 +13,7 @@ public class EnemyAI : MonoBehaviour, IDamagable
     List<GameObject> waypoints = new List<GameObject>();
     Material healthMat;
     PlayerController PC;
-    public Inventory inventory;
+    Inventory inventory;
     float distanceFromDest;
     bool followingPlan;
     bool healOnDone;
@@ -41,10 +41,10 @@ public class EnemyAI : MonoBehaviour, IDamagable
     public TextMeshPro activityText;
     public float mapSize = 50;
 
+    // used for debugging purposes in the editor
     [Header("Agent Inventory")]
     public ItemList[] items;
     public int[] amounts;
-
     [Header("Agent Statistics")]
     [Range(0, 100)]
     public float hp;
@@ -124,32 +124,29 @@ public class EnemyAI : MonoBehaviour, IDamagable
 
     void UpdatePlan()
     {
+        // make sure destination is same of target for plan
         if (NMA.destination != AP.pathToActions[0]) NMA.destination = AP.pathToActions[0];
 
+        // when in range of target
         if (Vector3.Distance(transform.position, AP.pathToActions[0]) < 1.5f)
         {
+            // perform action
             if (waitTimer > 0)
             {
                 waitTimer -= Time.deltaTime;
                 activityText.text = "Doing " + AP.actionsToGoal[0].actionName;
+                // TODO play sound effect
                 return;
             }
 
-            // TODO check if current goal is still reachable and if path is still most efficient 
-            //AP.SelectGoal(AP.actionsToGoal[AP.actionsToGoal.Count - 1], this);
+            // TODO debug checking if goal is still most efficient
+            //AP.SelectGoal(AP.endGoal, inventory);
 
             waitTimer = AP.waitTimePerAction[0];
 
-            // update inventory
-            if (AP.actionsToGoal.Count > 0)
-            {
-                AP.actionsToGoal[0].PerformAction(inventory);
-                EUS.desireToRest += AP.actionsToGoal[0].actionCost;
-            }
-
-            AP.waitTimePerAction.RemoveAt(0);
-            AP.pathToActions.RemoveAt(0);
-            AP.actionsToGoal.RemoveAt(0);
+            // complete action
+            EUS.desireToRest += AP.actionsToGoal[0].actionCost;
+            AP.CompleteStep(inventory);
 
             if (AP.pathToActions.Count > 0)
             {
@@ -158,12 +155,14 @@ public class EnemyAI : MonoBehaviour, IDamagable
             }
             else
             {
+                // final step of plan has been completed
                 followingPlan = false;
                 if (healOnDone)
                 {
                     EUS.health = 100;
                     EUS.desireToEat = 0;
                     healOnDone = false;
+                    activityText.text = "Finished eating";
                 }
                 if (restOnDone)
                 {
@@ -171,6 +170,7 @@ public class EnemyAI : MonoBehaviour, IDamagable
                     EUS.health += restFromHeal;
                     EUS.desireToRest -= restFromHeal;
                     restOnDone = false;
+                    activityText.text = "Finished resting";
                 }
             }
         }
@@ -224,8 +224,8 @@ public class EnemyAI : MonoBehaviour, IDamagable
         NMA.speed = 3.5f;
 
         // set action based on desires
-        float choice = Random.Range(0, EUS.noDesireWeight + EUS.desireToEat + EUS.desireToRest);
-        if (choice > EUS.noDesireWeight && choice < EUS.noDesireWeight + EUS.desireToEat && EUS.health < 70 && EUS.desireToEat > 10)
+        UtilityStatus choice = EUS.GetStatus();
+        if (choice == UtilityStatus.Eating)
         {
             activityText.text = "Planning to heal...";
             AP.SelectGoal(healing, inventory);
@@ -236,7 +236,7 @@ public class EnemyAI : MonoBehaviour, IDamagable
             return;
         }
 
-        if (choice > EUS.noDesireWeight + EUS.desireToEat && choice < EUS.noDesireWeight + EUS.desireToEat + EUS.desireToRest && EUS.desireToRest > 25)
+        if (choice == UtilityStatus.Resting)
         {
             activityText.text = "Planning to rest...";
             AP.SelectGoal(resting, inventory);
@@ -247,31 +247,17 @@ public class EnemyAI : MonoBehaviour, IDamagable
             return;
         }
 
-        // choose new destination if desires are not met
-        // 1% chance to pick a completely random position instead of continuing with the waypoint system
-        Vector3 destination = Vector3.zero;
-        if (Random.Range(0, 100) < 1)
-        {
-            destination = new Vector3(Random.Range(-mapSize, mapSize), 0, Random.Range(-mapSize, mapSize));
-        }
-        else
-        {
-            // add current waypoint to bottom of the list
-            GameObject waypoint = waypoints[0];
-            waypoints.RemoveAt(0);
-            waypoints.Add(waypoint);
-            destination = waypoints[0].transform.position;
-            activityText.text = "Going to " + waypoints[0].name;
-        }
+        UpdateWaypoints();
+        NMA.destination = waypoints[0].transform.position;
+        activityText.text = "Going to " + waypoints[0].name;
+    }
 
-        NMA.destination = destination;
-        NavMeshPath NMP = new NavMeshPath();
-        NMA.CalculatePath(destination, NMP);
-        if (NMP.status == NavMeshPathStatus.PathPartial)
-        {
-            Debug.Log("Invalid destionation, calculating new one...");
-            GenerateDestination();
-        }
+    // add current waypoint to bottom of the list
+    void UpdateWaypoints()
+    {
+        GameObject waypoint = waypoints[0];
+        waypoints.RemoveAt(0);
+        waypoints.Add(waypoint);
     }
     
     public void TakeDamage(int amount, DamageType damageType, GameObject attacker)

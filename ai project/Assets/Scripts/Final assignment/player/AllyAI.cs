@@ -11,12 +11,15 @@ public class AllyAI : MonoBehaviour
     GameObject player;
     PlayerController PC;
     TrajectoryCalculator TC;
-    public Inventory inventory;
+    Inventory inventory;
+
     public GameObject destObj;
     public TextMeshPro activityText;
+
     bool followingPlan;
     bool inCover;
     bool isHidden;
+
     float idleTimer;
     float waitTimer = 3;
     float bombCd = 5;
@@ -102,6 +105,7 @@ public class AllyAI : MonoBehaviour
         else
         {
             Vector3 enemyPos = PC.attacker.transform.position;
+
             // if not covered and calculating new destination for cover and can see enemy, go hide!
             if (pathCd <= 0 && !inCover)
             {
@@ -109,12 +113,21 @@ public class AllyAI : MonoBehaviour
                 Collider[] hits = Physics.OverlapSphere(transform.position, 100f);
                 GameObject chosenObject = null;
                 float closestDistance = float.MaxValue;
+
                 foreach(Collider hit in hits)
                 {
                     if (hit.GetComponent<NavMeshAgent>() || hit.CompareTag("Player"))
                     {
                         continue; // skip objects that should not be used for hiding
                     }
+
+                    NavMeshPath NMP = new NavMeshPath();
+                    NMA.CalculatePath(HidingPosition(hit.gameObject, enemyPos), NMP);
+                    if (NMP.status == NavMeshPathStatus.PathPartial)
+                    {
+                        continue; // position from this object would be unreachable
+                    }
+
                     float dist = Vector3.Distance(hit.transform.position, enemyPos);
                     if (dist < closestDistance)
                     {
@@ -122,41 +135,8 @@ public class AllyAI : MonoBehaviour
                         closestDistance = dist;
                     }
                 }
-                Debug.Log(chosenObject.name);
-
-                // method used to calculate position behind cover compared to enemy position vs cover position
-                // reference: https://gyazo.com/ce97aeb37c1efc8a0b46dc98043c9778
-                Vector3 newPos = chosenObject.transform.position;
-                float newX = newPos.x;
-                float newZ = newPos.z;
-                Vector3 diffA = (PC.attacker.transform.position - newPos) / 2f;
-                Vector3 diffB = (newPos - PC.attacker.transform.position) / 2f;
-                // enemy is top right
-                if (enemyPos.x > newX && enemyPos.z > newZ)
-                {
-                    newX -= Mathf.Abs(diffA.x);
-                    newZ -= Mathf.Abs(diffA.z);
-                }
-                // enemy is bottom left
-                if (enemyPos.x < newX && enemyPos.z < newZ)
-                {
-                    newX += Mathf.Abs(diffB.x);
-                    newZ += Mathf.Abs(diffB.z);
-                }
-                // enemy is bottom right
-                if (enemyPos.x > newX && enemyPos.z < newZ)
-                {
-                    newX -= Mathf.Abs(diffA.x);
-                    newZ += Mathf.Abs(diffB.z);
-                }
-                // enemy is top left
-                if (enemyPos.x < newX && enemyPos.z > newZ)
-                {
-                    newX += Mathf.Abs(diffB.x);
-                    newZ -= Mathf.Abs(diffA.z);
-                }
-                newPos = new Vector3(newX, chosenObject.transform.position.y, newZ);
-                NMA.destination = newPos;
+                
+                NMA.destination = HidingPosition(chosenObject, enemyPos);
                 inCover = true;
 
                 pathCd = 5;
@@ -168,7 +148,6 @@ public class AllyAI : MonoBehaviour
 
             RaycastHit lineHit;
             Physics.Linecast(transform.position, enemyPos, out lineHit);
-            //Debug.Log(lineHit.collider.name);
 
             // if ally is at hiding position and cannot see the enemy then it can start throwing smoke bomb(s)
             if (inCover && !lineHit.collider.CompareTag("Enemy") && Vector3.Distance(transform.position, NMA.destination) < 2)
@@ -176,7 +155,8 @@ public class AllyAI : MonoBehaviour
                 if (!inventory.HasRequirement(ItemList.Smoke_Bomb, 1))
                 {
                     activityText.text = "Looking for smoke bombs...";
-                    // Make action for collecting bombs
+
+                    // Make temporarily action for collecting bombs
                     GameObject actionObj = new GameObject();
                     actionObj.AddComponent<Action>();
                     actionObj.transform.position = transform.position;
@@ -211,5 +191,46 @@ public class AllyAI : MonoBehaviour
                 }
             }
         }
+    }
+
+    // method used to calculate position behind cover compared to enemy position vs cover position
+    // reference: https://gyazo.com/ce97aeb37c1efc8a0b46dc98043c9778
+    Vector3 HidingPosition(GameObject chosenObject, Vector3 enemyPos)
+    {
+        Vector3 newPos = chosenObject.transform.position;
+        float newX = newPos.x;
+        float newZ = newPos.z;
+        Vector3 diffA = (PC.attacker.transform.position - newPos) / 2f;
+        Vector3 diffB = (newPos - PC.attacker.transform.position) / 2f;
+
+        // enemy is top right
+        if (enemyPos.x > newX && enemyPos.z > newZ)
+        {
+            newX -= Mathf.Abs(diffA.x);
+            newZ -= Mathf.Abs(diffA.z);
+        }
+
+        // enemy is bottom left
+        if (enemyPos.x < newX && enemyPos.z < newZ)
+        {
+            newX += Mathf.Abs(diffB.x);
+            newZ += Mathf.Abs(diffB.z);
+        }
+
+        // enemy is bottom right
+        if (enemyPos.x > newX && enemyPos.z < newZ)
+        {
+            newX -= Mathf.Abs(diffA.x);
+            newZ += Mathf.Abs(diffB.z);
+        }
+
+        // enemy is top left
+        if (enemyPos.x < newX && enemyPos.z > newZ)
+        {
+            newX += Mathf.Abs(diffB.x);
+            newZ -= Mathf.Abs(diffA.z);
+        }
+
+        return new Vector3(newX, chosenObject.transform.position.y, newZ);
     }
 }

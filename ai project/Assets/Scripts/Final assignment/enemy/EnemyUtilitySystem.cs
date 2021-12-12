@@ -57,4 +57,29 @@ public class EnemyUtilitySystem
         desireToKill = Mathf.Clamp(desireToKill, 0, 100);
         health = Mathf.Clamp(health, 1, 100);
     }
+
+    // returns value from 0-2 which indicates what the enemy should do
+    public UtilityStatus GetStatus()
+    {
+        UtilityStatus result = UtilityStatus.Continue;
+
+        float choice = Random.Range(0, noDesireWeight + desireToEat + desireToRest);
+        if (choice > noDesireWeight && choice < noDesireWeight + desireToEat && health < 70 && desireToEat > 10)
+        {
+            result = UtilityStatus.Eating;
+        }
+
+        if (choice > noDesireWeight + desireToEat && choice < noDesireWeight + desireToEat + desireToRest && desireToRest > 25)
+        {
+            result = UtilityStatus.Resting;
+        }
+
+        return result;
+    }
+}
+
+public enum UtilityStatus {
+    Continue,
+    Eating,
+    Resting
 }
