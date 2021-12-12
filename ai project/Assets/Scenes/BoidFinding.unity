@@ -1107,5 +1107,5 @@ MonoBehaviour:
   sepaMult: 5
   applyProfile1: 0
   applyProfile2: 0
-  applyProfile3: 0
+  applyProfile3: 1
   rmsMultiplier: 5

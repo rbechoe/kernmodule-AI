@@ -663,8 +663,8 @@ MonoBehaviour:
     m_NumColorKeys: 6
     m_NumAlphaKeys: 2
   movementSpeed: 5
-  followTarget: 0
-  enableMusic: 0
+  followTarget: 1
+  enableMusic: 1
   NeighbourDistMult: 10
   speedMult: 40
   flockMult: 20
@@ -673,7 +673,7 @@ MonoBehaviour:
   applyProfile1: 0
   applyProfile2: 0
   applyProfile3: 0
-  rmsMultiplier: 3
+  rmsMultiplier: 6.9
 --- !u!4 &1102455454
 Transform:
   m_ObjectHideFlags: 0
